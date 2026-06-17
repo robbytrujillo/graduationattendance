@@ -230,6 +230,7 @@ if(isset($_GET['reset'])){
 
     <link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.5.0/css/responsive.bootstrap4.min.css">
 
+    <!-- CSS -->
     <style>
     body {
         background: #f4f6f9;
