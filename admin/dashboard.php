@@ -82,27 +82,37 @@ $absensi = mysqli_query(
     <style>
     body {
         background: #f4f6f9;
+        overflow-x: hidden;
     }
 
     .navbar {
         background: #0F172A;
+        min-height: 70px;
     }
 
     .sidebar {
-        min-height: 100vh;
+        min-height: calc(100vh - 70px);
         background: #1E293B;
         color: white;
+        /* transition: all .3s ease; */
+        transition: left .15s ease;
     }
 
     .sidebar a {
         color: white;
         display: block;
-        padding: 12px;
+        padding: 14px 18px;
         text-decoration: none;
+        font-size: 16px;
+    }
+
+    .sidebar a i {
+        width: 25px;
     }
 
     .sidebar a:hover {
         background: #334155;
+        color: #fff;
     }
 
     .card-dashboard {
@@ -121,12 +131,51 @@ $absensi = mysqli_query(
         padding: 15px;
     }
 
-    @media(max-width:768px) {
+    /* Overlay mobile */
+    .sidebar-overlay {
+        display: none;
+    }
+
+    /* Mobile */
+    @media (max-width: 767.98px) {
 
         .sidebar {
-            min-height: auto;
+            position: fixed;
+            top: 0;
+            left: -280px;
+            width: 280px;
+            height: 100vh;
+            z-index: 1050;
+            padding-top: 75px !important;
+            overflow-y: auto;
+            min-height: 100vh;
         }
 
+        .sidebar.show {
+            left: 0;
+        }
+
+        .sidebar-overlay.show {
+            display: block;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, .5);
+            z-index: 1040;
+        }
+
+        .content-area {
+            width: 100%;
+            flex: 0 0 100%;
+            max-width: 100%;
+        }
+
+        .navbar-brand {
+            font-size: 18px;
+        }
+
+        .user-name {
+            display: none;
+        }
     }
     </style>
 
@@ -134,19 +183,24 @@ $absensi = mysqli_query(
 
 <body>
 
-    <nav class="navbar navbar-expand-lg navbar-dark">
+    <nav class="navbar navbar-dark">
 
-        <a class="navbar-brand" href="#">
+        <button type="button" class="btn btn-outline-light mr-2 d-md-none" id="btnSidebar">
+            <i class="fas fa-bars"></i>
+        </button>
+
+        <a class="navbar-brand" href="dashboard.php">
             🎓 Graduation Attendance
         </a>
 
         <div class="ml-auto">
 
-            <span class="text-white mr-3">
+            <span class="text-white mr-3 user-name">
                 <?= $_SESSION['nama']; ?>
             </span>
 
             <a href="../logout.php" class="btn btn-danger btn-sm" onclick="return confirm('Yakin logout?')">
+                <i class="fas fa-sign-out-alt"></i>
                 Logout
             </a>
 
@@ -160,7 +214,41 @@ $absensi = mysqli_query(
 
             <!-- SIDEBAR -->
 
-            <div class="col-md-2 sidebar p-0">
+            <!-- <div class="sidebar p-0" id="sidebar">
+
+                <a href="dashboard.php">
+                    <i class="fas fa-home"></i>
+                    Dashboard
+                </a>
+
+                <a href="siswa.php">
+                    <i class="fas fa-users"></i>
+                    Data Siswa
+                </a>
+
+                <a href="upload_excel.php">
+                    <i class="fas fa-file-excel"></i>
+                    Upload Excel
+                </a>
+
+                <a href="absensi.php">
+                    <i class="fas fa-check-circle"></i>
+                    Data Absensi
+                </a>
+
+                <a href="export_pdf.php">
+                    <i class="fas fa-file-pdf"></i>
+                    Export PDF
+                </a>
+
+                <a href="export_excel.php">
+                    <i class="fas fa-file-excel"></i>
+                    Export Excel
+                </a>
+
+            </div> -->
+
+            <div class="sidebar p-0 col-md-2" id="sidebar">
 
                 <a href="dashboard.php">
                     <i class="fas fa-home"></i>
@@ -194,9 +282,12 @@ $absensi = mysqli_query(
 
             </div>
 
+            <!-- WAJIB ADA -->
+            <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
             <!-- CONTENT -->
 
-            <div class="col-md-10">
+            <div class="col-md-10 content-area">
 
                 <div class="container-fluid mt-4">
 
@@ -382,7 +473,36 @@ $absensi = mysqli_query(
 
     <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
 
+    <!-- <script>
+    setTimeout(function() {
+        location.reload();
+    }, 30000);
+    </script> -->
+
+    <!-- <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script> -->
+
     <script>
+    $(document).ready(function() {
+
+        $('#btnSidebar').click(function() {
+            $('#sidebar').toggleClass('show');
+            $('#sidebarOverlay').toggleClass('show');
+        });
+
+        $('#sidebarOverlay').click(function() {
+            $('#sidebar').removeClass('show');
+            $('#sidebarOverlay').removeClass('show');
+        });
+
+        $('.sidebar a').click(function() {
+            if ($(window).width() < 768) {
+                $('#sidebar').removeClass('show');
+                $('#sidebarOverlay').removeClass('show');
+            }
+        });
+
+    });
+
     setTimeout(function() {
         location.reload();
     }, 30000);

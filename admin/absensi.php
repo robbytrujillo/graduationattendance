@@ -125,15 +125,19 @@ $no = $start + 1;
     <style>
     body {
         background: #f4f6f9;
+        overflow-x: hidden;
     }
 
     .navbar {
         background: #0F172A;
+        position: relative;
+        z-index: 1060;
     }
 
     .sidebar {
         background: #1E293B;
         min-height: 100vh;
+        transition: left 0.3s ease;
     }
 
     .sidebar a {
@@ -141,7 +145,7 @@ $no = $start + 1;
         display: block;
         padding: 12px 15px;
         text-decoration: none;
-        transition: .3s;
+        transition: 0.3s;
     }
 
     .sidebar a:hover,
@@ -171,14 +175,51 @@ $no = $start + 1;
         border-radius: 20px;
     }
 
-    @media(max-width:768px) {
+    #overlay {
+        display: none;
+    }
+
+    @media (max-width: 768px) {
         .sidebar {
-            min-height: auto;
+            position: fixed;
+            top: 0;
+            left: -270px;
+            width: 250px;
+            height: 100vh;
+            min-height: 100vh;
+            z-index: 1070;
+            overflow-y: auto;
+            padding-top: 65px !important;
+            box-shadow: 3px 0 15px rgba(0, 0, 0, 0.25);
+        }
+
+        .sidebar.show {
+            left: 0;
+        }
+
+        #overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.45);
+            z-index: 1065;
+        }
+
+        .content-area {
+            width: 100%;
+            flex: 0 0 100%;
+            max-width: 100%;
         }
 
         .btn-export {
             width: 100%;
             margin-top: 8px;
+        }
+
+        .navbar-brand {
+            font-size: 16px;
         }
     }
     </style>
@@ -188,6 +229,11 @@ $no = $start + 1;
 
     <!-- NAVBAR -->
     <nav class="navbar navbar-expand-lg navbar-dark">
+
+        <!-- TOMBOL SIDEBAR KHUSUS MOBILE -->
+        <button type="button" class="btn btn-outline-light d-md-none mr-2" id="toggleSidebar">
+            <i class="fas fa-bars"></i>
+        </button>
 
         <a class="navbar-brand" href="dashboard.php">
             🎓 Graduation Attendance
@@ -221,47 +267,50 @@ $no = $start + 1;
 
     </nav>
 
+    <!-- OVERLAY MOBILE -->
+    <div id="overlay"></div>
+
     <div class="container-fluid">
 
         <div class="row">
 
             <!-- SIDEBAR -->
-            <div class="col-md-2 sidebar p-0">
+            <div class="col-md-2 sidebar p-0" id="sidebar">
 
                 <a href="dashboard.php">
-                    <i class="fas fa-home"></i>
+                    <i class="fas fa-home mr-2"></i>
                     Dashboard
                 </a>
 
                 <a href="siswa.php">
-                    <i class="fas fa-user-graduate"></i>
+                    <i class="fas fa-user-graduate mr-2"></i>
                     Data Siswa
                 </a>
 
                 <a href="upload_excel.php">
-                    <i class="fas fa-file-excel"></i>
+                    <i class="fas fa-file-excel mr-2"></i>
                     Upload Excel
                 </a>
 
                 <a href="absensi.php" class="active">
-                    <i class="fas fa-check-circle"></i>
+                    <i class="fas fa-check-circle mr-2"></i>
                     Data Absensi
                 </a>
 
                 <a href="export_pdf.php">
-                    <i class="fas fa-file-pdf"></i>
+                    <i class="fas fa-file-pdf mr-2"></i>
                     Export PDF
                 </a>
 
                 <a href="export_excel.php">
-                    <i class="fas fa-file-excel"></i>
+                    <i class="fas fa-file-excel mr-2"></i>
                     Export Excel
                 </a>
 
             </div>
 
             <!-- CONTENT -->
-            <div class="col-md-10">
+            <div class="col-md-10 content-area">
 
                 <div class="container-fluid mt-4 mb-5">
 
@@ -331,14 +380,12 @@ $no = $start + 1;
 
                             <hr>
 
-                            <!-- TOTAL DATA -->
                             <div class="alert alert-info">
                                 <i class="fas fa-info-circle"></i>
                                 Total Data Absensi:
                                 <strong><?= number_format($totalData); ?></strong>
                             </div>
 
-                            <!-- TABLE -->
                             <div class="table-responsive">
 
                                 <table class="table table-bordered table-hover table-striped">
@@ -386,9 +433,7 @@ $no = $start + 1;
                                             </td>
                                         </tr>
 
-                                        <!-- MODAL DETAIL -->
                                         <div class="modal fade" id="detail<?= $row['id']; ?>" tabindex="-1">
-
                                             <div class="modal-dialog">
                                                 <div class="modal-content">
 
@@ -405,40 +450,32 @@ $no = $start + 1;
                                                     </div>
 
                                                     <div class="modal-body">
-
                                                         <table class="table table-bordered mb-0">
-
                                                             <tr>
                                                                 <th width="35%">NIS</th>
                                                                 <td><?= e($row['nis']); ?></td>
                                                             </tr>
-
                                                             <tr>
                                                                 <th>Nama</th>
                                                                 <td><?= e($row['nama_siswa']); ?></td>
                                                             </tr>
-
                                                             <tr>
                                                                 <th>Kelas</th>
                                                                 <td><?= e($row['kelas']); ?></td>
                                                             </tr>
-
                                                             <tr>
                                                                 <th>Hari</th>
                                                                 <td><?= e($row['hari']); ?></td>
                                                             </tr>
-
                                                             <tr>
                                                                 <th>Tanggal</th>
                                                                 <td><?= date('d-m-Y', strtotime($row['tanggal'])); ?>
                                                                 </td>
                                                             </tr>
-
                                                             <tr>
                                                                 <th>Jam</th>
                                                                 <td><?= e($row['jam']); ?></td>
                                                             </tr>
-
                                                             <tr>
                                                                 <th>Status</th>
                                                                 <td>
@@ -447,9 +484,7 @@ $no = $start + 1;
                                                                     </span>
                                                                 </td>
                                                             </tr>
-
                                                         </table>
-
                                                     </div>
 
                                                     <div class="modal-footer">
@@ -461,7 +496,6 @@ $no = $start + 1;
 
                                                 </div>
                                             </div>
-
                                         </div>
 
                                         <?php endwhile; ?>
@@ -483,11 +517,9 @@ $no = $start + 1;
 
                             </div>
 
-                            <!-- PAGINATION -->
                             <?php if ($totalPage > 1) : ?>
 
                             <nav class="mt-4">
-
                                 <ul class="pagination justify-content-center mb-0">
 
                                     <li class="page-item <?= ($page <= 1) ? 'disabled' : ''; ?>">
@@ -544,7 +576,6 @@ $no = $start + 1;
                                     </li>
 
                                 </ul>
-
                             </nav>
 
                             <?php endif; ?>
@@ -564,6 +595,50 @@ $no = $start + 1;
     <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+    <script>
+    $(document).ready(function() {
+
+        function bukaSidebar() {
+            $('#sidebar').addClass('show');
+            $('#overlay').fadeIn(200);
+            $('body').css('overflow', 'hidden');
+        }
+
+        function tutupSidebar() {
+            $('#sidebar').removeClass('show');
+            $('#overlay').fadeOut(200);
+            $('body').css('overflow', 'auto');
+        }
+
+        $('#toggleSidebar').on('click', function() {
+            if ($('#sidebar').hasClass('show')) {
+                tutupSidebar();
+            } else {
+                bukaSidebar();
+            }
+        });
+
+        $('#overlay').on('click', function() {
+            tutupSidebar();
+        });
+
+        $('#sidebar a').on('click', function() {
+            if ($(window).width() <= 768) {
+                tutupSidebar();
+            }
+        });
+
+        $(window).on('resize', function() {
+            if ($(window).width() > 768) {
+                $('#sidebar').removeClass('show');
+                $('#overlay').hide();
+                $('body').css('overflow', 'auto');
+            }
+        });
+
+    });
+    </script>
 
 </body>
 

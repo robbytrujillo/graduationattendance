@@ -281,6 +281,7 @@ if ($keyword !== '') {
 }
 ?>
 
+
 <!DOCTYPE html>
 <html lang="id">
 
@@ -295,28 +296,49 @@ if ($keyword !== '') {
     <style>
     body {
         background: #f4f6f9;
+        overflow-x: hidden;
     }
 
     .navbar {
         background: #0F172A;
+        min-height: 70px;
     }
 
     .sidebar {
         background: #1E293B;
-        min-height: 100vh;
+        min-height: calc(100vh - 70px);
+        transition: left .15s ease;
     }
 
     .sidebar a {
         color: #fff;
         display: block;
-        padding: 12px 15px;
+        padding: 14px 18px;
         text-decoration: none;
-        transition: .3s;
+        font-size: 16px;
+    }
+
+    .sidebar a i {
+        width: 25px;
     }
 
     .sidebar a:hover,
     .sidebar .active {
         background: #0d6efd;
+        color: #fff;
+    }
+
+    .sidebar-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 14px 18px;
+        color: white;
+        border-bottom: 1px solid rgba(255, 255, 255, .15);
+    }
+
+    .sidebar-overlay {
+        display: none;
     }
 
     .card {
@@ -334,14 +356,52 @@ if ($keyword !== '') {
         white-space: nowrap;
     }
 
-    @media(max-width:768px) {
+    @media (max-width: 767.98px) {
+
         .sidebar {
-            min-height: auto;
+            position: fixed;
+            top: 0;
+            left: -280px;
+            width: 280px;
+            height: 100vh;
+            min-height: 100vh;
+            z-index: 1060;
+            overflow-y: auto;
+        }
+
+        .sidebar.show {
+            left: 0;
+        }
+
+        .sidebar-overlay.show {
+            display: block;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, .5);
+            z-index: 1050;
+        }
+
+        .content-area {
+            width: 100%;
+            flex: 0 0 100%;
+            max-width: 100%;
+        }
+
+        .navbar-brand {
+            font-size: 17px;
+        }
+
+        .user-name {
+            display: none;
         }
 
         .btn-tambah {
             width: 100%;
             margin-top: 15px;
+        }
+
+        .action-btn .btn {
+            margin-bottom: 3px;
         }
     }
     </style>
@@ -349,64 +409,83 @@ if ($keyword !== '') {
 
 <body>
 
-    <nav class="navbar navbar-expand-lg navbar-dark">
+    <nav class="navbar navbar-dark">
+
+        <button type="button" class="btn btn-outline-light mr-2 d-md-none" id="btnSidebar">
+            <i class="fas fa-bars"></i>
+        </button>
+
         <a class="navbar-brand" href="dashboard.php">
             🎓 Graduation Attendance
         </a>
 
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav">
-            <span class="navbar-toggler-icon"></span>
-        </button>
+        <div class="ml-auto">
 
-        <div class="collapse navbar-collapse" id="navbarNav">
-            <ul class="navbar-nav ml-auto">
-                <li class="nav-item">
-                    <span class="nav-link">
-                        <i class="fas fa-user"></i>
-                        <?= e($_SESSION['nama']); ?>
-                    </span>
-                </li>
+            <span class="text-white mr-3 user-name">
+                <i class="fas fa-user"></i>
+                <?= e($_SESSION['nama']); ?>
+            </span>
 
-                <li class="nav-item">
-                    <a href="../logout.php" class="btn btn-danger btn-sm mt-1"
-                        onclick="return confirm('Yakin ingin logout?')">
-                        Logout
-                    </a>
-                </li>
-            </ul>
+            <a href="../logout.php" class="btn btn-danger btn-sm" onclick="return confirm('Yakin ingin logout?')">
+                <i class="fas fa-sign-out-alt"></i>
+                Logout
+            </a>
+
         </div>
+
     </nav>
 
     <div class="container-fluid">
         <div class="row">
 
-            <div class="col-md-2 sidebar p-0">
+            <div class="col-md-2 sidebar p-0" id="sidebar">
+
+                <div class="sidebar-header d-md-none">
+                    <strong>
+                        <i class="fas fa-graduation-cap"></i>
+                        Menu
+                    </strong>
+
+                    <button type="button" class="btn btn-danger btn-sm" id="btnCloseSidebar">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+
                 <a href="dashboard.php">
-                    <i class="fas fa-home"></i> Dashboard
+                    <i class="fas fa-home"></i>
+                    Dashboard
                 </a>
 
                 <a href="siswa.php" class="active">
-                    <i class="fas fa-user-graduate"></i> Data Siswa
+                    <i class="fas fa-user-graduate"></i>
+                    Data Siswa
                 </a>
 
                 <a href="upload_excel.php">
-                    <i class="fas fa-file-excel"></i> Upload Excel
+                    <i class="fas fa-file-excel"></i>
+                    Upload Excel
                 </a>
 
                 <a href="absensi.php">
-                    <i class="fas fa-check-circle"></i> Data Absensi
+                    <i class="fas fa-check-circle"></i>
+                    Data Absensi
                 </a>
 
                 <a href="export_pdf.php">
-                    <i class="fas fa-file-pdf"></i> Export PDF
+                    <i class="fas fa-file-pdf"></i>
+                    Export PDF
                 </a>
 
                 <a href="export_excel.php">
-                    <i class="fas fa-file-excel"></i> Export Excel
+                    <i class="fas fa-file-excel"></i>
+                    Export Excel
                 </a>
+
             </div>
 
-            <div class="col-md-10">
+            <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+            <div class="col-md-10 content-area">
                 <div class="container-fluid mt-4 mb-5">
 
                     <h3>
@@ -774,6 +853,50 @@ if ($keyword !== '') {
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+    <script>
+    $(document).ready(function() {
+
+        function bukaSidebar() {
+            $('#sidebar').addClass('show');
+            $('#sidebarOverlay').addClass('show');
+        }
+
+        function tutupSidebar() {
+            $('#sidebar').removeClass('show');
+            $('#sidebarOverlay').removeClass('show');
+        }
+
+        $('#btnSidebar').on('click', function() {
+            if ($('#sidebar').hasClass('show')) {
+                tutupSidebar();
+            } else {
+                bukaSidebar();
+            }
+        });
+
+        $('#btnCloseSidebar').on('click', function() {
+            tutupSidebar();
+        });
+
+        $('#sidebarOverlay').on('click', function() {
+            tutupSidebar();
+        });
+
+        $('.sidebar a').on('click', function() {
+            if ($(window).width() < 768) {
+                tutupSidebar();
+            }
+        });
+
+        $(window).on('resize', function() {
+            if ($(window).width() >= 768) {
+                tutupSidebar();
+            }
+        });
+
+    });
+    </script>
 
 </body>
 

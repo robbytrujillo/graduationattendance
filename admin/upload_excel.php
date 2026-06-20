@@ -191,6 +191,33 @@ if (isset($_POST['upload_excel'])) {
             min-height: auto;
         }
     }
+
+    .sidebar {
+        background: #1E293B;
+        min-height: 100vh;
+        transition: all 0.3s ease;
+    }
+
+    /* MOBILE */
+    @media (max-width: 768px) {
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: -260px;
+            width: 250px;
+            height: 100%;
+            z-index: 1050;
+            overflow-y: auto;
+        }
+
+        .sidebar.show {
+            left: 0;
+        }
+
+        .col-md-10 {
+            margin-left: 0 !important;
+        }
+    }
     </style>
 </head>
 
@@ -198,6 +225,10 @@ if (isset($_POST['upload_excel'])) {
 
     <!-- NAVBAR -->
     <nav class="navbar navbar-expand-lg navbar-dark">
+
+        <button class="btn btn-dark d-lg-none mr-2" id="toggleSidebar">
+            <i class="fas fa-bars"></i>
+        </button>
 
         <a class="navbar-brand" href="dashboard.php">
             🎓 Graduation Attendance
@@ -236,7 +267,7 @@ if (isset($_POST['upload_excel'])) {
         <div class="row">
 
             <!-- SIDEBAR -->
-            <div class="col-md-2 sidebar p-0">
+            <div class="col-md-2 sidebar p-0" id="sidebar">
 
                 <a href="dashboard.php">
                     <i class="fas fa-home"></i>
@@ -443,6 +474,32 @@ if (isset($_POST['upload_excel'])) {
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 
+    <script>
+    $(document).ready(function() {
+
+        $('#toggleSidebar').on('click', function() {
+            $('#sidebar').toggleClass('show');
+            $('#overlay').fadeToggle(200);
+        });
+
+        $('#overlay').on('click', function() {
+            $('#sidebar').removeClass('show');
+            $(this).fadeOut(200);
+        });
+
+    });
+    </script>
+
+    <div id="overlay" style="
+    position: fixed;
+    top:0;
+    left:0;
+    width:100%;
+    height:100%;
+    background:rgba(0,0,0,0.4);
+    display:none;
+    z-index:1040;
+"></div>
 </body>
 
 </html>
