@@ -531,7 +531,8 @@ $qrCodeOnline = "https://api.qrserver.com/v1/create-qr-code/?size=300x300&data="
                 GRADUATION ATTENDANCE
             </div>
 
-            <a href="../api/logout.php" class="btn-logout">
+            <!-- <a href="../api/logout.php" class="btn-logout"> -->
+            <a href="../api/logout.php?redirect=../index.php" class="btn-logout">
                 <i class="fas fa-sign-out-alt mr-1"></i>
                 Keluar
             </a>

@@ -380,7 +380,7 @@ if (isset($_POST['upload_excel'])) {
                 </li>
 
                 <li class="nav-item">
-                    <a href="../logout.php" class="btn btn-danger btn-sm mt-1"
+                    <a href="../logout.php" class="btn btn-danger btn-sm mt-1 rounded-pill"
                         onclick="return confirm('Yakin ingin logout?')">
                         Logout
                     </a>
@@ -489,12 +489,12 @@ if (isset($_POST['upload_excel'])) {
                                             QR Code dibuat otomatis untuk siswa baru.
                                         </div>
 
-                                        <button type="submit" name="upload_excel" class="btn btn-success btn-sm">
+                                        <button type="submit" name="upload_excel" class="btn btn-success btn-sm rounded-pill">
                                             <i class="fas fa-upload"></i>
                                             Upload dan Import Data
                                         </button>
 
-                                        <a href="template_excel.php" class="btn btn-outline-primary btn-sm">
+                                        <a href="template_excel.php" class="btn btn-outline-primary btn-sm rounded-pill">
                                             <i class="fas fa-download"></i>
                                             Download Template Excel
                                         </a>

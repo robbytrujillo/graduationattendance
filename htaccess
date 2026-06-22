@@ -1,0 +1,78 @@
+# Aktifkan rewrite URL
+RewriteEngine On
+
+# -------------------------------------------------
+# Keamanan: blokir akses file/folder sensitif
+# -------------------------------------------------
+
+# Blokir akses folder config
+RewriteRule ^config/ - [F,L]
+
+# Blokir akses folder vendor
+RewriteRule ^vendor/ - [F,L]
+
+# Blokir file .env, composer, dan file konfigurasi
+<FilesMatch "(\.env|composer\.(json|lock)|config\.php|database\.php)$">
+    Require all denied
+</FilesMatch>
+
+# Blokir directory listing
+Options -Indexes
+
+# -------------------------------------------------
+# Redirect halaman utama ke login
+# -------------------------------------------------
+
+DirectoryIndex login.php
+
+# -------------------------------------------------
+# Paksa HTTPS (aktifkan setelah SSL domain aktif)
+# -------------------------------------------------
+
+# RewriteCond %{HTTPS} !=on
+# RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+
+# -------------------------------------------------
+# Hindari akses file/folder tersembunyi
+# -------------------------------------------------
+
+RewriteRule (^|/)\. - [F,L]
+
+# -------------------------------------------------
+# Cache file asset
+# -------------------------------------------------
+
+<IfModule mod_expires.c>
+    ExpiresActive On
+
+    ExpiresByType text/css "access plus 7 days"
+    ExpiresByType application/javascript "access plus 7 days"
+    ExpiresByType image/jpeg "access plus 30 days"
+    ExpiresByType image/png "access plus 30 days"
+    ExpiresByType image/gif "access plus 30 days"
+    ExpiresByType image/svg+xml "access plus 30 days"
+    ExpiresByType font/woff2 "access plus 30 days"
+</IfModule>
+
+# -------------------------------------------------
+# Kompresi GZIP
+# -------------------------------------------------
+
+<IfModule mod_deflate.c>
+    AddOutputFilterByType DEFLATE text/html
+    AddOutputFilterByType DEFLATE text/plain
+    AddOutputFilterByType DEFLATE text/css
+    AddOutputFilterByType DEFLATE application/javascript
+    AddOutputFilterByType DEFLATE application/json
+    AddOutputFilterByType DEFLATE application/xml
+</IfModule>
+
+# -------------------------------------------------
+# Header keamanan dasar
+# -------------------------------------------------
+
+<IfModule mod_headers.c>
+    Header always set X-Content-Type-Options "nosniff"
+    Header always set X-Frame-Options "SAMEORIGIN"
+    Header always set Referrer-Policy "strict-origin-when-cross-origin"
+</IfModule>

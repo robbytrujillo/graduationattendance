@@ -372,12 +372,12 @@ $no = $start + 1;
 
                                 <div>
                                     <a href="export_pdf.php?<?= e($queryString); ?>"
-                                        class="btn btn-danger btn-sm export-btn">
+                                        class="btn btn-danger btn-sm export-btn rounded-pill">
                                         <i class="fas fa-file-pdf"></i> PDF
                                     </a>
 
                                     <a href="export_excel.php?<?= e($queryString); ?>"
-                                        class="btn btn-success btn-sm export-btn">
+                                        class="btn btn-success btn-sm export-btn rounded-pill">
                                         <i class="fas fa-file-excel"></i> Excel
                                     </a>
                                 </div>
@@ -399,13 +399,14 @@ $no = $start + 1;
                                     </div>
 
                                     <div class="col-md-2 mb-2">
-                                        <button type="submit" class="btn btn-primary btn-block filter-btn">
+                                        <button type="submit" class="btn btn-primary btn-block filter-btn rounded-pill">
                                             <i class="fas fa-search"></i> Cari
                                         </button>
                                     </div>
 
                                     <div class="col-md-2 mb-2">
-                                        <a href="absensi.php" class="btn btn-secondary btn-block filter-btn">
+                                        <a href="absensi.php"
+                                            class="btn btn-secondary btn-block filter-btn rounded-pill">
                                             <i class="fas fa-sync-alt"></i> Reset
                                         </a>
                                     </div>
