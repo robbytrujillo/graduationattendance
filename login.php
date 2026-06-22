@@ -91,6 +91,8 @@ if (isset($_POST['login'])) {
 
     <title>Login Wisuda QRCode</title>
 
+    <link rel="icon" type="image/png" href="assets/img/logo.png">
+
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
 
     <style>
@@ -106,36 +108,36 @@ if (isset($_POST['login'])) {
         width: 100%;
         max-width: 400px;
         border: none;
-        border-radius: 15px;
+        border-radius: 20px;
         overflow: hidden;
         box-shadow: 0 5px 20px rgba(0, 0, 0, .1);
     }
 
     .login-header {
-        background: #0d6efd;
+        background: #C5953F;
         color: white;
-        padding: 25px;
+        padding: 7px;
         text-align: center;
     }
 
     .logo {
-        width: 80px;
-        height: 80px;
+        width: 60px;
+        height: 60px;
         object-fit: contain;
-        margin-bottom: 10px;
+        margin-bottom: 2px;
     }
 
     .btn-login {
-        background: #0d6efd;
+        background: #184978;
         border: none;
     }
 
     .btn-login:hover {
-        background: #0b5ed7;
+        background: #2f6faa;
     }
 
     .footer-text {
-        font-size: 12px;
+        font-size: 15px;
         color: #888;
     }
     </style>
@@ -148,15 +150,16 @@ if (isset($_POST['login'])) {
 
         <div class="login-header">
 
-            <img src="assets/img/logo.png" class="logo" alt="Logo">
+            <img src="assets/img/logo.png" class="logo"
+                style="width: 80px; margin-left: 0%; margin-top: 0%; bg-color: white" alt="Logo">
 
             <h4 class="mb-0">
-                Absensi Wisuda
+                🎓Graduation
             </h4>
 
-            <small>
+            <!-- <small>
                 QR Code Attendance System
-            </small>
+            </small> -->
 
         </div>
 
@@ -174,16 +177,17 @@ if (isset($_POST['login'])) {
 
                 <div class="form-group">
                     <label>Username</label>
-                    <input type="text" name="username" class="form-control" placeholder="Masukkan Username" required>
+                    <input type="text" name="username" class="form-control rounded-pill"
+                        placeholder="Masukkan Nomor Induk Siswa" required>
                 </div>
 
                 <div class="form-group">
                     <label>Password</label>
-                    <input type="password" name="password" class="form-control" placeholder="Masukkan Password"
-                        required>
+                    <input type="password" name="password" class="form-control rounded-pill"
+                        placeholder="Masukkan Password" required>
                 </div>
 
-                <button type="submit" name="login" class="btn btn-primary btn-block btn-login">
+                <button type="submit" name="login" class="btn btn-primary btn-block btn-login rounded-pill">
 
                     Login
                 </button>
@@ -194,13 +198,9 @@ if (isset($_POST['login'])) {
 
             <div class="text-center footer-text">
 
-                Login Siswa :
-                <br>
-
-                Username = NIS
-                <br>
-
-                Password Default = 123456
+                <div class="small">Copyright &copy; 2026 by <a href="https://robbyilham.com/"
+                        style="text-decoration: none" target="_blank"> Robby
+                        Ilham</a></div>
 
             </div>
 

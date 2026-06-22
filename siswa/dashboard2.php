@@ -15,7 +15,7 @@ if (
     !isset($_SESSION['role']) ||
     $_SESSION['role'] !== 'siswa'
 ) {
-    header("Location: ../index.php");
+    header("Location: ../index.html");
     exit;
 }
 
@@ -23,17 +23,7 @@ $userId = (int) $_SESSION['id'];
 
 /*
 |--------------------------------------------------------------------------
-| Helper Escape HTML
-|--------------------------------------------------------------------------
-*/
-function e($value)
-{
-    return htmlspecialchars((string) $value, ENT_QUOTES, 'UTF-8');
-}
-
-/*
-|--------------------------------------------------------------------------
-| Ambil Data Siswa
+| Ambil data siswa dari tabel users
 |--------------------------------------------------------------------------
 */
 $sql = "
@@ -54,7 +44,7 @@ $sql = "
 $stmt = mysqli_prepare($conn, $sql);
 
 if (!$stmt) {
-    die("Query data siswa gagal: " . mysqli_error($conn));
+    die("Query gagal: " . mysqli_error($conn));
 }
 
 mysqli_stmt_bind_param($stmt, "i", $userId);
@@ -62,8 +52,6 @@ mysqli_stmt_execute($stmt);
 
 $result = mysqli_stmt_get_result($stmt);
 $siswa = mysqli_fetch_assoc($result);
-
-mysqli_stmt_close($stmt);
 
 if (!$siswa) {
     $_SESSION = [];
@@ -73,74 +61,21 @@ if (!$siswa) {
     exit;
 }
 
+function e($value)
+{
+    return htmlspecialchars((string) $value, ENT_QUOTES, 'UTF-8');
+}
+
 $nama  = $siswa['nama_siswa'] ?? '-';
 $nis   = $siswa['nis'] ?? '-';
 $kelas = $siswa['kelas'] ?? '-';
 
 /*
 |--------------------------------------------------------------------------
-| Ambil Status Absensi Terakhir
-|--------------------------------------------------------------------------
-*/
-$statusAbsensi  = 'Belum Hadir';
-$hariAbsensi    = '-';
-$tanggalAbsensi = '-';
-$jamAbsensi     = '-';
-
-$sqlAbsensi = "
-    SELECT
-        id,
-        hari,
-        tanggal,
-        jam,
-        status,
-        created_at
-    FROM absensi
-    WHERE user_id = ?
-    ORDER BY id DESC
-    LIMIT 1
-";
-
-$stmtAbsensi = mysqli_prepare($conn, $sqlAbsensi);
-
-if ($stmtAbsensi) {
-    mysqli_stmt_bind_param($stmtAbsensi, "i", $userId);
-    mysqli_stmt_execute($stmtAbsensi);
-
-    $resultAbsensi = mysqli_stmt_get_result($stmtAbsensi);
-    $dataAbsensi   = mysqli_fetch_assoc($resultAbsensi);
-
-    mysqli_stmt_close($stmtAbsensi);
-
-    if ($dataAbsensi) {
-        $statusAbsensi = !empty($dataAbsensi['status'])
-            ? $dataAbsensi['status']
-            : 'Hadir';
-
-        $hariAbsensi = !empty($dataAbsensi['hari'])
-            ? $dataAbsensi['hari']
-            : '-';
-
-        $tanggalAbsensi = !empty($dataAbsensi['tanggal'])
-            ? date('d-m-Y', strtotime($dataAbsensi['tanggal']))
-            : '-';
-
-        $jamAbsensi = !empty($dataAbsensi['jam'])
-            ? substr($dataAbsensi['jam'], 0, 5)
-            : '-';
-    }
-}
-
-/*
-|--------------------------------------------------------------------------
-| Status Kehadiran
-|--------------------------------------------------------------------------
-*/
-$sudahHadir = strtolower(trim($statusAbsensi)) === 'hadir';
-
-/*
-|--------------------------------------------------------------------------
 | QR Code Kehadiran
+|--------------------------------------------------------------------------
+| Isi QR hanya qr_token agar sesuai dengan:
+| admin/proses_scan.php
 |--------------------------------------------------------------------------
 */
 $qrText = trim($siswa['qr_token'] ?? '');
@@ -239,6 +174,7 @@ $qrCodeOnline = "https://api.qrserver.com/v1/create-qr-code/?size=300x300&data="
         color: #ffffff;
         font-size: 12px;
         text-decoration: none;
+        transition: .2s ease;
     }
 
     .btn-logout:hover {
@@ -283,7 +219,20 @@ $qrCodeOnline = "https://api.qrserver.com/v1/create-qr-code/?size=300x300&data="
         text-align: center;
     }
 
+    .card-header-wisuda::before {
+        content: "";
+        position: absolute;
+        top: -120px;
+        right: -85px;
+        width: 250px;
+        height: 250px;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, .13);
+    }
+
     .graduation-icon {
+        position: relative;
+        z-index: 1;
         width: 65px;
         height: 65px;
         margin: 0 auto 12px;
@@ -296,12 +245,16 @@ $qrCodeOnline = "https://api.qrserver.com/v1/create-qr-code/?size=300x300&data="
     }
 
     .card-header-wisuda h2 {
+        position: relative;
+        z-index: 1;
         margin: 0;
         font-size: 20px;
         font-weight: 700;
     }
 
     .card-header-wisuda p {
+        position: relative;
+        z-index: 1;
         margin: 6px 0 0;
         font-size: 11px;
         opacity: .92;
@@ -380,70 +333,6 @@ $qrCodeOnline = "https://api.qrserver.com/v1/create-qr-code/?size=300x300&data="
         font-weight: 600;
     }
 
-    .attendance-status {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin: 16px 0 18px;
-        padding: 14px;
-        border-radius: 16px;
-    }
-
-    .attendance-status.hadir {
-        background: #e7f8ed;
-        border: 1px solid #b7eac8;
-        color: #18733b;
-    }
-
-    .attendance-status.belum-hadir {
-        background: #fff4e4;
-        border: 1px solid #ffd9a8;
-        color: #a95600;
-    }
-
-    .status-left {
-        display: flex;
-        align-items: center;
-    }
-
-    .status-icon {
-        width: 42px;
-        height: 42px;
-        margin-right: 12px;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        border-radius: 12px;
-        font-size: 18px;
-    }
-
-    .hadir .status-icon {
-        background: #c8f1d6;
-    }
-
-    .belum-hadir .status-icon {
-        background: #ffe0b5;
-    }
-
-    .status-text small {
-        display: block;
-        font-size: 10px;
-        opacity: .85;
-    }
-
-    .status-text strong {
-        display: block;
-        font-size: 14px;
-    }
-
-    .attendance-time {
-        max-width: 105px;
-        font-size: 10px;
-        font-weight: 600;
-        line-height: 1.45;
-        text-align: right;
-    }
-
     .qr-area {
         margin-top: 21px;
         padding: 20px 16px;
@@ -479,44 +368,19 @@ $qrCodeOnline = "https://api.qrserver.com/v1/create-qr-code/?size=300x300&data="
         display: block;
     }
 
-    .success-attendance-box {
-        margin-top: 21px;
-        padding: 24px 16px;
-        border-radius: 19px;
-        background: linear-gradient(135deg, #14783d, #2aae60);
-        color: #ffffff;
-        text-align: center;
-    }
-
-    .success-attendance-box .success-icon {
-        width: 58px;
-        height: 58px;
-        margin: 0 auto 12px;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        border-radius: 50%;
-        background: rgba(255, 255, 255, .20);
-        font-size: 25px;
-    }
-
-    .success-attendance-box h4 {
-        margin: 0 0 5px;
-        font-size: 16px;
-        font-weight: 700;
-    }
-
-    .success-attendance-box p {
-        margin: 0;
-        font-size: 11px;
-        opacity: .90;
-    }
-
     .footer {
         margin-top: 20px;
         color: rgba(255, 255, 255, .66);
         font-size: 10px;
         text-align: center;
+    }
+
+    @media (min-width: 768px) {
+        .page-wrapper {
+            min-height: auto;
+            margin-top: 28px;
+            margin-bottom: 28px;
+        }
     }
     </style>
 </head>
@@ -568,7 +432,6 @@ $qrCodeOnline = "https://api.qrserver.com/v1/create-qr-code/?size=300x300&data="
                     <div class="info-box-icon">
                         <i class="fas fa-id-card"></i>
                     </div>
-
                     <div>
                         <span class="info-box-label">Nomor Induk Siswa</span>
                         <span class="info-box-value"><?= e($nis); ?></span>
@@ -579,39 +442,11 @@ $qrCodeOnline = "https://api.qrserver.com/v1/create-qr-code/?size=300x300&data="
                     <div class="info-box-icon">
                         <i class="fas fa-school"></i>
                     </div>
-
                     <div>
                         <span class="info-box-label">Kelas</span>
                         <span class="info-box-value"><?= e($kelas); ?></span>
                     </div>
                 </div>
-
-                <div class="attendance-status <?= $sudahHadir ? 'hadir' : 'belum-hadir'; ?>">
-
-                    <div class="status-left">
-                        <div class="status-icon">
-                            <i class="fas <?= $sudahHadir ? 'fa-check-circle' : 'fa-clock'; ?>"></i>
-                        </div>
-
-                        <div class="status-text">
-                            <small>Status Kehadiran Wisuda</small>
-                            <strong><?= $sudahHadir ? 'Sudah Hadir' : 'Belum Hadir'; ?></strong>
-                        </div>
-                    </div>
-
-                    <div class="attendance-time">
-                        <?php if ($sudahHadir) : ?>
-                        <?= e($hariAbsensi); ?><br>
-                        <?= e($tanggalAbsensi); ?><br>
-                        <?= e($jamAbsensi); ?> WIB
-                        <?php else : ?>
-                        Menunggu<br>registrasi
-                        <?php endif; ?>
-                    </div>
-
-                </div>
-
-                <?php if (!$sudahHadir) : ?>
 
                 <div class="qr-area">
                     <h4>
@@ -626,19 +461,6 @@ $qrCodeOnline = "https://api.qrserver.com/v1/create-qr-code/?size=300x300&data="
                     </div>
                 </div>
 
-                <?php else : ?>
-
-                <div class="success-attendance-box">
-                    <div class="success-icon">
-                        <i class="fas fa-check"></i>
-                    </div>
-
-                    <h4>Absensi Berhasil Dicatat</h4>
-                    <p>Terima kasih, silakan mengikuti rangkaian acara wisuda.</p>
-                </div>
-
-                <?php endif; ?>
-
             </div>
         </div>
 
@@ -647,12 +469,6 @@ $qrCodeOnline = "https://api.qrserver.com/v1/create-qr-code/?size=300x300&data="
         </div>
 
     </div>
-
-    <script>
-    setInterval(function() {
-        location.reload();
-    }, 30000);
-    </script>
 
 </body>
 

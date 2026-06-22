@@ -132,7 +132,7 @@ if (mysqli_num_rows($resultCek) > 0) {
     exit("
         <div class='alert alert-warning mb-0'>
             <i class='fas fa-exclamation-triangle'></i>
-            <strong>" . e($siswa['nama_siswa']) . "</strong> sudah absen hari ini.
+            <strong>" . e($siswa['nama_siswa']) . ' ' . 'kelas' . ' ' . e($siswa['kelas']) . "</strong> sudah absen hari ini.
         </div>
     ");
 }
