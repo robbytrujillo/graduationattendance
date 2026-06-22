@@ -466,6 +466,10 @@ if ($keyword !== '') {
                     Upload Excel
                 </a>
 
+                <a href="scan_qrcode.php">
+                    <i class="fas fa-qrcode mr-2"></i> Scan QR
+                </a>
+
                 <a href="absensi.php">
                     <i class="fas fa-check-circle"></i>
                     Data Absensi
@@ -544,12 +548,12 @@ if ($keyword !== '') {
                                     </form>
                                 </div>
 
-                                <div class="col-md-4 text-md-right">
+                                <!-- <div class="col-md-4 text-md-right">
                                     <button class="btn btn-success btn-tambah" data-toggle="modal"
                                         data-target="#modalTambah">
                                         <i class="fas fa-plus"></i> Tambah Siswa
                                     </button>
-                                </div>
+                                </div> -->
                             </div>
 
                             <?php $modalHtml = ''; ?>

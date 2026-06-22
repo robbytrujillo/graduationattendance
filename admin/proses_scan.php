@@ -1,48 +1,180 @@
 <?php
 require_once '../config/config.php';
 
-if (!isset($_POST['qr'])) {
-    exit("QR tidak valid");
+header('Content-Type: text/html; charset=utf-8');
+
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
 }
 
-$data = json_decode($_POST['qr'], true);
-
-if (!isset($data['nis'])) {
-    exit("<div class='alert alert-danger'>QR tidak sesuai format</div>");
+function e($value)
+{
+    return htmlspecialchars((string) $value, ENT_QUOTES, 'UTF-8');
 }
 
-$nis = mysqli_real_escape_string($conn, $data['nis']);
-
-// cari user
-$user = mysqli_query($conn, "SELECT id FROM users WHERE nis='$nis' LIMIT 1");
-if (mysqli_num_rows($user) == 0) {
-    exit("<div class='alert alert-danger'>Siswa tidak ditemukan</div>");
+/*
+|--------------------------------------------------------------------------
+| Validasi login admin/petugas
+|--------------------------------------------------------------------------
+*/
+if (
+    !isset($_SESSION['id']) ||
+    !in_array($_SESSION['role'] ?? '', ['admin', 'petugas'])
+) {
+    exit("
+        <div class='alert alert-danger mb-0'>
+            <i class='fas fa-lock'></i>
+            Session tidak valid. Silakan login kembali.
+        </div>
+    ");
 }
 
-$row = mysqli_fetch_assoc($user);
-$user_id = $row['id'];
+/*
+|--------------------------------------------------------------------------
+| Validasi QR dari AJAX scanner
+|--------------------------------------------------------------------------
+*/
+if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+    exit("
+        <div class='alert alert-danger mb-0'>
+            Metode request tidak valid.
+        </div>
+    ");
+}
 
+$qrToken = trim($_POST['qr'] ?? '');
+
+if ($qrToken === '') {
+    exit("
+        <div class='alert alert-danger mb-0'>
+            <i class='fas fa-times-circle'></i>
+            QR Code tidak terbaca.
+        </div>
+    ");
+}
+
+/*
+|--------------------------------------------------------------------------
+| Cari siswa berdasarkan qr_token
+|--------------------------------------------------------------------------
+*/
+$sqlSiswa = "
+    SELECT
+        id,
+        nis,
+        nama_siswa,
+        kelas,
+        qr_token
+    FROM users
+    WHERE qr_token = ?
+      AND role = 'siswa'
+    LIMIT 1
+";
+
+$stmtSiswa = mysqli_prepare($conn, $sqlSiswa);
+
+if (!$stmtSiswa) {
+    exit("
+        <div class='alert alert-danger mb-0'>
+            Query siswa gagal: " . e(mysqli_error($conn)) . "
+        </div>
+    ");
+}
+
+mysqli_stmt_bind_param($stmtSiswa, "s", $qrToken);
+mysqli_stmt_execute($stmtSiswa);
+
+$resultSiswa = mysqli_stmt_get_result($stmtSiswa);
+$siswa = mysqli_fetch_assoc($resultSiswa);
+
+if (!$siswa) {
+    exit("
+        <div class='alert alert-danger mb-0'>
+            <i class='fas fa-times-circle'></i>
+            QR Code tidak terdaftar atau bukan milik siswa.
+        </div>
+    ");
+}
+
+$userId  = (int) $siswa['id'];
 $tanggal = date('Y-m-d');
 $jam     = date('H:i:s');
 
-/* CEK SUDAH ABSEN HARI INI */
-$cek = mysqli_query($conn, "
-    SELECT id FROM absensi 
-    WHERE user_id='$user_id' AND tanggal='$tanggal'
-");
+/*
+|--------------------------------------------------------------------------
+| Cek absensi hari ini
+|--------------------------------------------------------------------------
+*/
+$sqlCek = "
+    SELECT id
+    FROM absensi
+    WHERE user_id = ?
+      AND tanggal = ?
+    LIMIT 1
+";
 
-if (mysqli_num_rows($cek) > 0) {
-    exit("<div class='alert alert-warning'>Sudah absen hari ini</div>");
+$stmtCek = mysqli_prepare($conn, $sqlCek);
+
+if (!$stmtCek) {
+    exit("
+        <div class='alert alert-danger mb-0'>
+            Query cek absensi gagal: " . e(mysqli_error($conn)) . "
+        </div>
+    ");
 }
 
-/* INSERT ABSENSI */
-$insert = mysqli_query($conn, "
-    INSERT INTO absensi (user_id, hari, tanggal, jam, status)
-    VALUES ('$user_id', DAYNAME(CURDATE()), '$tanggal', '$jam', 'Hadir')
-");
+mysqli_stmt_bind_param($stmtCek, "is", $userId, $tanggal);
+mysqli_stmt_execute($stmtCek);
 
-if ($insert) {
-    echo "<div class='alert alert-success'>Absensi berhasil</div>";
+$resultCek = mysqli_stmt_get_result($stmtCek);
+
+if (mysqli_num_rows($resultCek) > 0) {
+    exit("
+        <div class='alert alert-warning mb-0'>
+            <i class='fas fa-exclamation-triangle'></i>
+            <strong>" . e($siswa['nama_siswa']) . "</strong> sudah absen hari ini.
+        </div>
+    ");
+}
+
+/*
+|--------------------------------------------------------------------------
+| Simpan absensi
+|--------------------------------------------------------------------------
+*/
+$sqlInsert = "
+    INSERT INTO absensi (user_id, hari, tanggal, jam, status)
+    VALUES (?, DAYNAME(CURDATE()), ?, ?, 'Hadir')
+";
+
+$stmtInsert = mysqli_prepare($conn, $sqlInsert);
+
+if (!$stmtInsert) {
+    exit("
+        <div class='alert alert-danger mb-0'>
+            Query simpan absensi gagal: " . e(mysqli_error($conn)) . "
+        </div>
+    ");
+}
+
+mysqli_stmt_bind_param($stmtInsert, "iss", $userId, $tanggal, $jam);
+
+if (mysqli_stmt_execute($stmtInsert)) {
+    echo "
+        <div class='alert alert-success mb-0'>
+            <i class='fas fa-check-circle'></i>
+            <strong>Absensi berhasil direkam.</strong>
+            <hr class='my-2'>
+            <strong>Nama:</strong> " . e($siswa['nama_siswa']) . "<br>
+            <strong>NIS:</strong> " . e($siswa['nis']) . "<br>
+            <strong>Kelas:</strong> " . e($siswa['kelas']) . "
+        </div>
+    ";
 } else {
-    echo "<div class='alert alert-danger'>Gagal menyimpan absensi</div>";
+    echo "
+        <div class='alert alert-danger mb-0'>
+            <i class='fas fa-times-circle'></i>
+            Gagal menyimpan absensi: " . e(mysqli_error($conn)) . "
+        </div>
+    ";
 }

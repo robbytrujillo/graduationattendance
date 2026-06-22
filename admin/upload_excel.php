@@ -407,6 +407,10 @@ if (isset($_POST['upload_excel'])) {
                     <i class="fas fa-file-excel"></i> Upload Excel
                 </a>
 
+                <a href="scan_qrcode.php">
+                    <i class="fas fa-qrcode mr-2"></i> Scan QR
+                </a>
+
                 <a href="absensi.php">
                     <i class="fas fa-check-circle"></i> Data Absensi
                 </a>

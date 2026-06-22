@@ -25,6 +25,9 @@ $userId = (int) $_SESSION['id'];
 |--------------------------------------------------------------------------
 | Ambil data siswa dari tabel users
 |--------------------------------------------------------------------------
+| Kolom tabel:
+| id, nis, nama_siswa, kelas, username, password,
+| qr_token, qrcode, role, created_at
 */
 $sql = "
     SELECT
@@ -34,6 +37,7 @@ $sql = "
         kelas,
         username,
         qr_token,
+        qrcode,
         role
     FROM users
     WHERE id = ?
@@ -57,7 +61,7 @@ if (!$siswa) {
     $_SESSION = [];
     session_destroy();
 
-    header("Location: ../login.php");
+    header("Location: ../index.html");
     exit;
 }
 
@@ -72,33 +76,39 @@ $kelas = $siswa['kelas'] ?? '-';
 
 /*
 |--------------------------------------------------------------------------
-| QR Code Kehadiran
+| QR Code
 |--------------------------------------------------------------------------
-| Isi QR hanya qr_token agar sesuai dengan:
-| admin/proses_scan.php
-|--------------------------------------------------------------------------
+| Jika kolom qrcode berisi nama file, contoh:
+| siswa_001.png
+|
+| Maka file disimpan di:
+| assets/qrcode/siswa_001.png
 */
-$qrText = trim($siswa['qr_token'] ?? '');
+$namaFileQr = trim($siswa['qrcode'] ?? '');
 
-if ($qrText === '') {
-    die("
-        <div style='
-            font-family: Poppins, Arial, sans-serif;
-            max-width: 500px;
-            margin: 80px auto;
-            padding: 25px;
-            border-radius: 14px;
-            background: #fff3cd;
-            color: #856404;
-            text-align: center;
-        '>
-            <h3>QR Token Belum Tersedia</h3>
-            <p>Silakan hubungi admin untuk membuat QR Code siswa.</p>
-        </div>
-    ");
+$qrCodeUrl  = '';
+$qrCodeFile = '';
+
+if ($namaFileQr !== '') {
+    $qrCodeUrl  = "../assets/qrcode/" . $namaFileQr;
+    $qrCodeFile = __DIR__ . "/../assets/qrcode/" . $namaFileQr;
 }
 
-$qrCodeOnline = "https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=" . urlencode($qrText);
+$qrCodeAda = $qrCodeFile !== '' && file_exists($qrCodeFile);
+
+/*
+|--------------------------------------------------------------------------
+| Fallback QR Code
+|--------------------------------------------------------------------------
+| Jika file QR belum ada, QR dibuat dari qr_token.
+*/
+$qrText = $siswa['qr_token'] ?? '';
+
+if ($qrText === '') {
+    $qrText = "WISUDA|" . $siswa['id'] . "|" . $nis;
+}
+
+$qrCodeOnline = "https://api.qrserver.com/v1/create-qr-code/?size=260x260&data=" . urlencode($qrText);
 ?>
 <!DOCTYPE html>
 <html lang="id">
@@ -116,7 +126,6 @@ $qrCodeOnline = "https://api.qrserver.com/v1/create-qr-code/?size=300x300&data="
     <style>
     :root {
         --navy: #0b2440;
-        --navy-light: #1e568b;
         --gold: #c99b3b;
         --gold-light: #f0d387;
         --text: #1d2d40;
@@ -172,7 +181,6 @@ $qrCodeOnline = "https://api.qrserver.com/v1/create-qr-code/?size=300x300&data="
         color: #ffffff;
         font-size: 12px;
         text-decoration: none;
-        transition: .2s ease;
     }
 
     .btn-logout:hover {
@@ -335,7 +343,7 @@ $qrCodeOnline = "https://api.qrserver.com/v1/create-qr-code/?size=300x300&data="
         margin-top: 21px;
         padding: 20px 16px;
         border-radius: 19px;
-        background: linear-gradient(135deg, #0c2b4c, var(--navy-light));
+        background: linear-gradient(135deg, #0c2b4c, #1e568b);
         color: #ffffff;
         text-align: center;
     }
@@ -353,7 +361,7 @@ $qrCodeOnline = "https://api.qrserver.com/v1/create-qr-code/?size=300x300&data="
     }
 
     .qr-container {
-        width: 210px;
+        width: 190px;
         margin: auto;
         padding: 10px;
         border-radius: 16px;
@@ -371,14 +379,6 @@ $qrCodeOnline = "https://api.qrserver.com/v1/create-qr-code/?size=300x300&data="
         color: rgba(255, 255, 255, .66);
         font-size: 10px;
         text-align: center;
-    }
-
-    @media (min-width: 768px) {
-        .page-wrapper {
-            min-height: auto;
-            margin-top: 28px;
-            margin-bottom: 28px;
-        }
     }
     </style>
 </head>
@@ -405,7 +405,6 @@ $qrCodeOnline = "https://api.qrserver.com/v1/create-qr-code/?size=300x300&data="
         </div>
 
         <div class="student-card">
-
             <div class="card-header-wisuda">
                 <div class="graduation-icon">
                     <i class="fas fa-user-graduate"></i>
@@ -416,7 +415,6 @@ $qrCodeOnline = "https://api.qrserver.com/v1/create-qr-code/?size=300x300&data="
             </div>
 
             <div class="card-body-wisuda">
-
                 <div class="avatar">
                     <i class="fas fa-user"></i>
                 </div>
@@ -455,10 +453,13 @@ $qrCodeOnline = "https://api.qrserver.com/v1/create-qr-code/?size=300x300&data="
                     <p>Gunakan QR Code ini untuk proses absensi wisuda.</p>
 
                     <div class="qr-container">
+                        <?php if ($qrCodeAda): ?>
+                        <img src="<?= e($qrCodeUrl); ?>" alt="QR Code <?= e($nama); ?>">
+                        <?php else: ?>
                         <img src="<?= e($qrCodeOnline); ?>" alt="QR Code <?= e($nama); ?>">
+                        <?php endif; ?>
                     </div>
                 </div>
-
             </div>
         </div>
 
