@@ -261,6 +261,8 @@ if (isset($_POST['upload_excel'])) {
 
     <title>Upload Excel | Absensi Wisuda</title>
 
+    <link rel="icon" type="image/png" href="../assets/img/logo.png">
+
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
 
@@ -489,12 +491,14 @@ if (isset($_POST['upload_excel'])) {
                                             QR Code dibuat otomatis untuk siswa baru.
                                         </div>
 
-                                        <button type="submit" name="upload_excel" class="btn btn-success btn-sm rounded-pill">
+                                        <button type="submit" name="upload_excel"
+                                            class="btn btn-success btn-sm rounded-pill">
                                             <i class="fas fa-upload"></i>
                                             Upload dan Import Data
                                         </button>
 
-                                        <a href="template_excel.php" class="btn btn-outline-primary btn-sm rounded-pill">
+                                        <a href="template_excel.php"
+                                            class="btn btn-outline-primary btn-sm rounded-pill">
                                             <i class="fas fa-download"></i>
                                             Download Template Excel
                                         </a>
