@@ -75,9 +75,9 @@ if (isset($_POST['login'])) {
 
 <?php if(isset($_GET['logout'])) : ?>
 
-<div class="alert alert-success">
+<!-- <div class="alert alert-success">
     Berhasil logout dari sistem.
-</div>
+</div> -->
 
 <?php endif; ?>
 
