@@ -147,6 +147,8 @@ $no = $start + 1;
 
     <title>Data Absensi Wisuda</title>
 
+    <link rel="icon" type="image/png" href="../assets/img/logo.png">
+
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">

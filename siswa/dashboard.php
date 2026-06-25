@@ -5,11 +5,6 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
-/*
-|--------------------------------------------------------------------------
-| Proteksi halaman khusus siswa
-|--------------------------------------------------------------------------
-*/
 if (
     !isset($_SESSION['id']) ||
     !isset($_SESSION['role']) ||
@@ -21,30 +16,13 @@ if (
 
 $userId = (int) $_SESSION['id'];
 
-/*
-|--------------------------------------------------------------------------
-| Helper Escape HTML
-|--------------------------------------------------------------------------
-*/
 function e($value)
 {
     return htmlspecialchars((string) $value, ENT_QUOTES, 'UTF-8');
 }
 
-/*
-|--------------------------------------------------------------------------
-| Ambil Data Siswa
-|--------------------------------------------------------------------------
-*/
 $sql = "
-    SELECT
-        id,
-        nis,
-        nama_siswa,
-        kelas,
-        username,
-        qr_token,
-        role
+    SELECT id, nis, nama_siswa, kelas, username, qr_token, role
     FROM users
     WHERE id = ?
       AND role = 'siswa'
@@ -69,7 +47,7 @@ if (!$siswa) {
     $_SESSION = [];
     session_destroy();
 
-    header("Location: ../login.php");
+    header("Location: ../index.php");
     exit;
 }
 
@@ -77,24 +55,13 @@ $nama  = $siswa['nama_siswa'] ?? '-';
 $nis   = $siswa['nis'] ?? '-';
 $kelas = $siswa['kelas'] ?? '-';
 
-/*
-|--------------------------------------------------------------------------
-| Ambil Status Absensi Terakhir
-|--------------------------------------------------------------------------
-*/
 $statusAbsensi  = 'Belum Hadir';
 $hariAbsensi    = '-';
 $tanggalAbsensi = '-';
 $jamAbsensi     = '-';
 
 $sqlAbsensi = "
-    SELECT
-        id,
-        hari,
-        tanggal,
-        jam,
-        status,
-        created_at
+    SELECT id, hari, tanggal, jam, status, created_at
     FROM absensi
     WHERE user_id = ?
     ORDER BY id DESC
@@ -131,18 +98,8 @@ if ($stmtAbsensi) {
     }
 }
 
-/*
-|--------------------------------------------------------------------------
-| Status Kehadiran
-|--------------------------------------------------------------------------
-*/
 $sudahHadir = strtolower(trim($statusAbsensi)) === 'hadir';
 
-/*
-|--------------------------------------------------------------------------
-| QR Code Kehadiran
-|--------------------------------------------------------------------------
-*/
 $qrText = trim($siswa['qr_token'] ?? '');
 
 if ($qrText === '') {
@@ -175,7 +132,6 @@ $qrCodeOnline = "https://api.qrserver.com/v1/create-qr-code/?size=300x300&data="
     <title>Dashboard Wisudawan - <?= e($nama); ?></title>
 
     <link rel="icon" type="image/png" href="../assets/img/logo.png">
-
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
@@ -220,15 +176,53 @@ $qrCodeOnline = "https://api.qrserver.com/v1/create-qr-code/?size=300x300&data="
         margin-bottom: 28px;
     }
 
-    .brand {
-        font-size: 12px;
-        font-weight: 600;
-        letter-spacing: .4px;
+    .school-brand {
+        display: flex;
+        align-items: center;
+        min-width: 0;
     }
 
-    .brand i {
+    .school-logo-wrap {
+        width: 48px;
+        height: 48px;
+        margin-right: 11px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-shrink: 0;
+        border: 1px solid rgba(240, 211, 135, .42);
+        border-radius: 15px;
+        background: rgba(255, 255, 255, .12);
+        box-shadow: 0 8px 20px rgba(0, 0, 0, .14);
+        overflow: hidden;
+    }
+
+    .school-logo {
+        width: 40px;
+        height: 40px;
+        object-fit: contain;
+    }
+
+    .school-brand-text {
+        display: flex;
+        flex-direction: column;
+        line-height: 1.15;
+        white-space: nowrap;
+    }
+
+    .school-name {
+        color: #ffffff;
+        font-size: 13px;
+        font-weight: 700;
+        letter-spacing: 1px;
+    }
+
+    .school-subtitle {
+        margin-top: 3px;
         color: var(--gold-light);
-        margin-right: 6px;
+        font-size: 9px;
+        font-weight: 600;
+        letter-spacing: 1.4px;
     }
 
     .btn-logout {
@@ -248,7 +242,7 @@ $qrCodeOnline = "https://api.qrserver.com/v1/create-qr-code/?size=300x300&data="
     }
 
     .hero {
-        margin-bottom: 22px;
+        margin-bottom: 18px;
     }
 
     .hero small {
@@ -264,6 +258,91 @@ $qrCodeOnline = "https://api.qrserver.com/v1/create-qr-code/?size=300x300&data="
         font-size: 25px;
         font-weight: 700;
         line-height: 1.38;
+    }
+
+    .event-info-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 10px;
+        margin: 0 0 12px;
+    }
+
+    .event-info-card {
+        display: flex;
+        align-items: center;
+        min-height: 74px;
+        padding: 11px 10px;
+        border: 1px solid rgba(201, 155, 59, .18);
+        border-radius: 14px;
+        background: linear-gradient(135deg, #fffdf7, #f5f8ea);
+        color: var(--text);
+        box-shadow: 0 7px 18px rgba(0, 0, 0, .08);
+    }
+
+    .event-info-icon {
+        width: 33px;
+        height: 33px;
+        margin-right: 9px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+        border: 1px solid #eadba8;
+        border-radius: 8px;
+        background: #f8f1d7;
+        color: #0f5a4b;
+        font-size: 14px;
+    }
+
+    .event-info-content {
+        min-width: 0;
+    }
+
+    .event-info-label {
+        display: block;
+        margin-bottom: 2px;
+        color: #b1842e;
+        font-size: 7px;
+        font-weight: 700;
+        letter-spacing: .45px;
+        text-transform: uppercase;
+    }
+
+    .event-info-title {
+        display: block;
+        overflow: hidden;
+        color: #234434;
+        font-size: 10px;
+        font-weight: 700;
+        line-height: 1.25;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .event-info-description {
+        display: block;
+        overflow: hidden;
+        margin-top: 2px;
+        color: #6b786d;
+        font-size: 7px;
+        font-weight: 500;
+        line-height: 1.3;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .event-tagline {
+        margin: 0 0 18px;
+        color: rgba(255, 255, 255, .88);
+        font-size: 9px;
+        font-weight: 500;
+        line-height: 1.5;
+        text-align: center;
+    }
+
+    .event-tagline strong {
+        color: var(--gold-light);
+        font-weight: 700;
     }
 
     .student-card {
@@ -513,10 +592,105 @@ $qrCodeOnline = "https://api.qrserver.com/v1/create-qr-code/?size=300x300&data="
     }
 
     .footer {
-        margin-top: 20px;
-        color: rgba(255, 255, 255, .66);
-        font-size: 10px;
+        margin-top: 22px;
         text-align: center;
+    }
+
+    .footer-school {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 10px 14px;
+        border: 1px solid rgba(255, 255, 255, .13);
+        border-radius: 16px;
+        background: rgba(255, 255, 255, .08);
+        color: rgba(255, 255, 255, .88);
+    }
+
+    .footer-logo {
+        width: 28px;
+        height: 28px;
+        margin-right: 9px;
+        object-fit: contain;
+    }
+
+    .footer-school div {
+        display: flex;
+        flex-direction: column;
+        text-align: left;
+        line-height: 1.25;
+    }
+
+    .footer-school strong {
+        color: var(--gold-light);
+        font-size: 10px;
+        font-weight: 600;
+    }
+
+    .footer-school span {
+        margin-top: 2px;
+        color: rgba(255, 255, 255, .70);
+        font-size: 8px;
+    }
+
+    .footer-copy {
+        margin-top: 9px;
+        color: rgba(255, 255, 255, .52);
+        font-size: 9px;
+    }
+
+    @media (max-width: 390px) {
+        .school-logo-wrap {
+            width: 42px;
+            height: 42px;
+            margin-right: 8px;
+            border-radius: 13px;
+        }
+
+        .school-logo {
+            width: 35px;
+            height: 35px;
+        }
+
+        .school-name {
+            font-size: 11px;
+            letter-spacing: .7px;
+        }
+
+        .school-subtitle {
+            font-size: 8px;
+            letter-spacing: .9px;
+        }
+
+        .btn-logout {
+            padding: 7px 10px;
+            font-size: 11px;
+        }
+
+        .event-info-grid {
+            gap: 8px;
+        }
+
+        .event-info-card {
+            min-height: 70px;
+            padding: 9px 8px;
+        }
+
+        .event-info-icon {
+            width: 30px;
+            height: 30px;
+            margin-right: 7px;
+            font-size: 12px;
+        }
+
+        .event-info-title {
+            font-size: 9px;
+        }
+
+        .event-info-description,
+        .event-info-label {
+            font-size: 6.5px;
+        }
     }
     </style>
 </head>
@@ -526,12 +700,17 @@ $qrCodeOnline = "https://api.qrserver.com/v1/create-qr-code/?size=300x300&data="
     <div class="page-wrapper">
 
         <div class="topbar">
-            <div class="brand">
-                <i class="fas fa-graduation-cap"></i>
-                GRADUATION ATTENDANCE
+            <div class="school-brand">
+                <div class="school-logo-wrap">
+                    <img src="../assets/img/logo.png" alt="Logo Ibnu Hajar Boarding School" class="school-logo">
+                </div>
+
+                <div class="school-brand-text">
+                    <span class="school-name">IBNU HAJAR</span>
+                    <span class="school-subtitle">BOARDING SCHOOL</span>
+                </div>
             </div>
 
-            <!-- <a href="../api/logout.php" class="btn-logout"> -->
             <a href="../api/logout.php?redirect=../index.php" class="btn-logout">
                 <i class="fas fa-sign-out-alt mr-1"></i>
                 Keluar
@@ -542,6 +721,37 @@ $qrCodeOnline = "https://api.qrserver.com/v1/create-qr-code/?size=300x300&data="
             <small>Selamat datang,</small>
             <h1>Wisudawan / Wisudawati<br><?= e($nama); ?></h1>
         </div>
+
+        <div class="event-info-grid">
+            <div class="event-info-card">
+                <div class="event-info-icon">
+                    <i class="fas fa-calendar-alt"></i>
+                </div>
+
+                <div class="event-info-content">
+                    <span class="event-info-label">Waktu Pelaksanaan</span>
+                    <span class="event-info-title">Ahad, 5 Juli 2026</span>
+                    <span class="event-info-description">Pukul 07.30 WIB s.d. Selesai</span>
+                </div>
+            </div>
+
+            <div class="event-info-card">
+                <div class="event-info-icon">
+                    <i class="fas fa-map-marker-alt"></i>
+                </div>
+
+                <div class="event-info-content">
+                    <span class="event-info-label">Lokasi Acara</span>
+                    <span class="event-info-title">Gedung Puri Begawan</span>
+                    <span class="event-info-description">Jl. Pajajaran No. 9, Kota Bogor</span>
+                </div>
+            </div>
+        </div>
+
+        <p class="event-tagline">
+            Ibnu Hajar Boarding School —
+            <strong>“Datang dengan Obsesi, Pulang Membawa Prestasi”</strong>
+        </p>
 
         <div class="student-card">
 
@@ -588,7 +798,6 @@ $qrCodeOnline = "https://api.qrserver.com/v1/create-qr-code/?size=300x300&data="
                 </div>
 
                 <div class="attendance-status <?= $sudahHadir ? 'hadir' : 'belum-hadir'; ?>">
-
                     <div class="status-left">
                         <div class="status-icon">
                             <i class="fas <?= $sudahHadir ? 'fa-check-circle' : 'fa-clock'; ?>"></i>
@@ -609,11 +818,9 @@ $qrCodeOnline = "https://api.qrserver.com/v1/create-qr-code/?size=300x300&data="
                         Menunggu<br>registrasi
                         <?php endif; ?>
                     </div>
-
                 </div>
 
                 <?php if (!$sudahHadir) : ?>
-
                 <div class="qr-area">
                     <h4>
                         <i class="fas fa-qrcode mr-1"></i>
@@ -626,9 +833,7 @@ $qrCodeOnline = "https://api.qrserver.com/v1/create-qr-code/?size=300x300&data="
                         <img src="<?= e($qrCodeOnline); ?>" alt="QR Code <?= e($nama); ?>">
                     </div>
                 </div>
-
                 <?php else : ?>
-
                 <div class="success-attendance-box">
                     <div class="success-icon">
                         <i class="fas fa-check"></i>
@@ -637,14 +842,24 @@ $qrCodeOnline = "https://api.qrserver.com/v1/create-qr-code/?size=300x300&data="
                     <h4>Absensi Berhasil Dicatat</h4>
                     <p>Terima kasih, silakan mengikuti rangkaian acara wisuda.</p>
                 </div>
-
                 <?php endif; ?>
 
             </div>
         </div>
 
         <div class="footer">
-            © <?= date('Y'); ?> Graduation Attendance System
+            <!-- <div class="footer-school">
+                <img src="../assets/img/logo.png" alt="Logo IHBS" class="footer-logo">
+
+                <div>
+                    <strong>Ibnu Hajar Boarding School</strong>
+                    <span>“Datang dengan Obsesi, Pulang Membawa Prestasi”</span>
+                </div>
+            </div> -->
+
+            <div class="footer-copy">
+                © <?= date('Y'); ?> Graduation Attendance System
+            </div>
         </div>
 
     </div>
