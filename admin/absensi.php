@@ -301,6 +301,24 @@ $no = $start + 1;
             margin-top: 7px;
         }
     }
+
+    .content-area {
+        min-height: calc(100vh - 70px);
+        display: flex;
+        flex-direction: column;
+    }
+
+    .content-wrapper {
+        flex: 1;
+    }
+
+    .footer-text {
+        padding: 18px 10px;
+        margin-top: 25px;
+        color: #64748B;
+        border-top: 1px solid #e5e7eb;
+        background: #fff;
+    }
     </style>
 </head>
 
@@ -363,178 +381,196 @@ $no = $start + 1;
             </aside>
 
             <main class="col-md-10 content-area">
-                <div class="container-fluid py-4">
 
-                    <div class="card main-card">
-                        <div class="card-header bg-primary text-white">
-                            <div class="d-flex justify-content-between align-items-center flex-wrap">
-                                <h5 class="mb-2 mb-md-0">
-                                    <i class="fas fa-check-circle mr-1"></i>
-                                    Data Absensi Wisuda
-                                </h5>
+                <div class="content-wrapper">
 
-                                <div>
-                                    <a href="export_pdf.php?<?= e($queryString); ?>"
-                                        class="btn btn-danger btn-sm export-btn rounded-pill">
-                                        <i class="fas fa-file-pdf"></i> PDF
-                                    </a>
+                    <div class="container-fluid py-4">
 
-                                    <a href="export_excel.php?<?= e($queryString); ?>"
-                                        class="btn btn-success btn-sm export-btn rounded-pill">
-                                        <i class="fas fa-file-excel"></i> Excel
-                                    </a>
-                                </div>
-                            </div>
-                        </div>
+                        <div class="card main-card">
+                            <div class="card-header bg-primary text-white">
+                                <div class="d-flex justify-content-between align-items-center flex-wrap">
+                                    <h5 class="mb-2 mb-md-0">
+                                        <i class="fas fa-check-circle mr-1"></i>
+                                        Data Absensi Wisuda
+                                    </h5>
 
-                        <div class="card-body">
+                                    <div>
+                                        <a href="export_pdf.php?<?= e($queryString); ?>"
+                                            class="btn btn-danger btn-sm export-btn rounded-pill">
+                                            <i class="fas fa-file-pdf"></i> PDF
+                                        </a>
 
-                            <form method="GET">
-                                <div class="form-row">
-                                    <div class="col-md-5 mb-2">
-                                        <input type="text" name="cari" class="form-control"
-                                            placeholder="Cari NIS, nama, kelas..." value="<?= e($cari); ?>">
-                                    </div>
-
-                                    <div class="col-md-3 mb-2">
-                                        <input type="date" name="tanggal" class="form-control"
-                                            value="<?= e($tanggal); ?>">
-                                    </div>
-
-                                    <div class="col-md-2 mb-2">
-                                        <button type="submit" class="btn btn-primary btn-block filter-btn rounded-pill">
-                                            <i class="fas fa-search"></i> Cari
-                                        </button>
-                                    </div>
-
-                                    <div class="col-md-2 mb-2">
-                                        <a href="absensi.php"
-                                            class="btn btn-secondary btn-block filter-btn rounded-pill">
-                                            <i class="fas fa-sync-alt"></i> Reset
+                                        <a href="export_excel.php?<?= e($queryString); ?>"
+                                            class="btn btn-success btn-sm export-btn rounded-pill">
+                                            <i class="fas fa-file-excel"></i> Excel
                                         </a>
                                     </div>
                                 </div>
-                            </form>
-
-                            <div class="alert alert-info mt-3 mb-3">
-                                <i class="fas fa-info-circle"></i>
-                                Total Data Absensi:
-                                <strong><?= number_format($totalData); ?></strong>
                             </div>
 
-                            <div class="table-responsive">
-                                <table class="table table-bordered table-hover">
-                                    <thead class="thead-dark">
-                                        <tr>
-                                            <th>No</th>
-                                            <th>Hari</th>
-                                            <th>Tanggal</th>
-                                            <th>Jam</th>
-                                            <th>NIS</th>
-                                            <th>Nama</th>
-                                            <th>Kelas</th>
-                                            <th>Status</th>
-                                            <th class="text-center">Aksi</th>
-                                        </tr>
-                                    </thead>
+                            <div class="card-body">
 
-                                    <tbody>
-                                        <?php if (mysqli_num_rows($query) > 0): ?>
-                                        <?php while ($row = mysqli_fetch_assoc($query)): ?>
-                                        <tr>
-                                            <td><?= $no++; ?></td>
-                                            <td><?= e(hariIndonesia($row['hari'])); ?></td>
-                                            <td><?= date('d-m-Y', strtotime($row['tanggal'])); ?></td>
-                                            <td><?= e($row['jam']); ?></td>
-                                            <td><?= e($row['nis']); ?></td>
-                                            <td><?= e($row['nama_siswa']); ?></td>
-                                            <td><?= e($row['kelas']); ?></td>
-                                            <td>
-                                                <span class="badge-hadir"><?= e($row['status']); ?></span>
-                                            </td>
-                                            <td class="text-center">
-                                                <button type="button" class="btn btn-info btn-sm btn-detail"
-                                                    data-toggle="modal" data-target="#detail<?= $row['id']; ?>">
-                                                    <i class="fas fa-eye"></i>
-                                                </button>
-                                            </td>
-                                        </tr>
-                                        <?php endwhile; ?>
-                                        <?php else: ?>
-                                        <tr>
-                                            <td colspan="9" class="text-center text-muted py-4">
-                                                <i class="fas fa-info-circle"></i>
-                                                Tidak ada data absensi.
-                                            </td>
-                                        </tr>
+                                <form method="GET">
+                                    <div class="form-row">
+                                        <div class="col-md-5 mb-2">
+                                            <input type="text" name="cari" class="form-control"
+                                                placeholder="Cari NIS, nama, kelas..." value="<?= e($cari); ?>">
+                                        </div>
+
+                                        <div class="col-md-3 mb-2">
+                                            <input type="date" name="tanggal" class="form-control"
+                                                value="<?= e($tanggal); ?>">
+                                        </div>
+
+                                        <div class="col-md-2 mb-2">
+                                            <button type="submit"
+                                                class="btn btn-primary btn-block filter-btn rounded-pill">
+                                                <i class="fas fa-search"></i> Cari
+                                            </button>
+                                        </div>
+
+                                        <div class="col-md-2 mb-2">
+                                            <a href="absensi.php"
+                                                class="btn btn-secondary btn-block filter-btn rounded-pill">
+                                                <i class="fas fa-sync-alt"></i> Reset
+                                            </a>
+                                        </div>
+                                    </div>
+                                </form>
+
+                                <div class="alert alert-info mt-3 mb-3">
+                                    <i class="fas fa-info-circle"></i>
+                                    Total Data Absensi:
+                                    <strong><?= number_format($totalData); ?></strong>
+                                </div>
+
+                                <div class="table-responsive">
+                                    <table class="table table-bordered table-hover">
+                                        <thead class="thead-dark">
+                                            <tr>
+                                                <th>No</th>
+                                                <th>Hari</th>
+                                                <th>Tanggal</th>
+                                                <th>Jam</th>
+                                                <th>NIS</th>
+                                                <th>Nama</th>
+                                                <th>Kelas</th>
+                                                <th>Status</th>
+                                                <th class="text-center">Aksi</th>
+                                            </tr>
+                                        </thead>
+
+                                        <tbody>
+                                            <?php if (mysqli_num_rows($query) > 0): ?>
+                                            <?php while ($row = mysqli_fetch_assoc($query)): ?>
+                                            <tr>
+                                                <td><?= $no++; ?></td>
+                                                <td><?= e(hariIndonesia($row['hari'])); ?></td>
+                                                <td><?= date('d-m-Y', strtotime($row['tanggal'])); ?></td>
+                                                <td><?= e($row['jam']); ?></td>
+                                                <td><?= e($row['nis']); ?></td>
+                                                <td><?= e($row['nama_siswa']); ?></td>
+                                                <td><?= e($row['kelas']); ?></td>
+                                                <td>
+                                                    <span class="badge-hadir"><?= e($row['status']); ?></span>
+                                                </td>
+                                                <td class="text-center">
+                                                    <button type="button" class="btn btn-info btn-sm btn-detail"
+                                                        data-toggle="modal" data-target="#detail<?= $row['id']; ?>">
+                                                        <i class="fas fa-eye"></i>
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                            <?php endwhile; ?>
+                                            <?php else: ?>
+                                            <tr>
+                                                <td colspan="9" class="text-center text-muted py-4">
+                                                    <i class="fas fa-info-circle"></i>
+                                                    Tidak ada data absensi.
+                                                </td>
+                                            </tr>
+                                            <?php endif; ?>
+                                        </tbody>
+                                    </table>
+                                </div>
+
+                                <?php if ($totalPage > 1): ?>
+                                <nav class="mt-4">
+                                    <ul class="pagination justify-content-center mb-0">
+
+                                        <li class="page-item <?= ($page <= 1) ? 'disabled' : ''; ?>">
+                                            <a class="page-link" href="?page=<?= $page - 1; ?>&<?= e($queryString); ?>">
+                                                Previous
+                                            </a>
+                                        </li>
+
+                                        <?php
+                                        $startPage = max(1, $page - 2);
+                                        $endPage   = min($totalPage, $page + 2);
+                                        ?>
+
+                                        <?php if ($startPage > 1): ?>
+                                        <li class="page-item">
+                                            <a class="page-link" href="?page=1&<?= e($queryString); ?>">1</a>
+                                        </li>
+
+                                        <?php if ($startPage > 2): ?>
+                                        <li class="page-item disabled">
+                                            <span class="page-link">...</span>
+                                        </li>
                                         <?php endif; ?>
-                                    </tbody>
-                                </table>
+                                        <?php endif; ?>
+
+                                        <?php for ($i = $startPage; $i <= $endPage; $i++): ?>
+                                        <li class="page-item <?= ($page === $i) ? 'active' : ''; ?>">
+                                            <a class="page-link" href="?page=<?= $i; ?>&<?= e($queryString); ?>">
+                                                <?= $i; ?>
+                                            </a>
+                                        </li>
+                                        <?php endfor; ?>
+
+                                        <?php if ($endPage < $totalPage): ?>
+                                        <?php if ($endPage < $totalPage - 1): ?>
+                                        <li class="page-item disabled">
+                                            <span class="page-link">...</span>
+                                        </li>
+                                        <?php endif; ?>
+
+                                        <li class="page-item">
+                                            <a class="page-link"
+                                                href="?page=<?= $totalPage; ?>&<?= e($queryString); ?>">
+                                                <?= $totalPage; ?>
+                                            </a>
+                                        </li>
+                                        <?php endif; ?>
+
+                                        <li class="page-item <?= ($page >= $totalPage) ? 'disabled' : ''; ?>">
+                                            <a class="page-link" href="?page=<?= $page + 1; ?>&<?= e($queryString); ?>">
+                                                Next
+                                            </a>
+                                        </li>
+
+                                    </ul>
+                                </nav>
+                                <?php endif; ?>
+
                             </div>
-
-                            <?php if ($totalPage > 1): ?>
-                            <nav class="mt-4">
-                                <ul class="pagination justify-content-center mb-0">
-
-                                    <li class="page-item <?= ($page <= 1) ? 'disabled' : ''; ?>">
-                                        <a class="page-link" href="?page=<?= $page - 1; ?>&<?= e($queryString); ?>">
-                                            Previous
-                                        </a>
-                                    </li>
-
-                                    <?php
-                                    $startPage = max(1, $page - 2);
-                                    $endPage   = min($totalPage, $page + 2);
-                                    ?>
-
-                                    <?php if ($startPage > 1): ?>
-                                    <li class="page-item">
-                                        <a class="page-link" href="?page=1&<?= e($queryString); ?>">1</a>
-                                    </li>
-
-                                    <?php if ($startPage > 2): ?>
-                                    <li class="page-item disabled">
-                                        <span class="page-link">...</span>
-                                    </li>
-                                    <?php endif; ?>
-                                    <?php endif; ?>
-
-                                    <?php for ($i = $startPage; $i <= $endPage; $i++): ?>
-                                    <li class="page-item <?= ($page === $i) ? 'active' : ''; ?>">
-                                        <a class="page-link" href="?page=<?= $i; ?>&<?= e($queryString); ?>">
-                                            <?= $i; ?>
-                                        </a>
-                                    </li>
-                                    <?php endfor; ?>
-
-                                    <?php if ($endPage < $totalPage): ?>
-                                    <?php if ($endPage < $totalPage - 1): ?>
-                                    <li class="page-item disabled">
-                                        <span class="page-link">...</span>
-                                    </li>
-                                    <?php endif; ?>
-
-                                    <li class="page-item">
-                                        <a class="page-link" href="?page=<?= $totalPage; ?>&<?= e($queryString); ?>">
-                                            <?= $totalPage; ?>
-                                        </a>
-                                    </li>
-                                    <?php endif; ?>
-
-                                    <li class="page-item <?= ($page >= $totalPage) ? 'disabled' : ''; ?>">
-                                        <a class="page-link" href="?page=<?= $page + 1; ?>&<?= e($queryString); ?>">
-                                            Next
-                                        </a>
-                                    </li>
-
-                                </ul>
-                            </nav>
-                            <?php endif; ?>
-
                         </div>
+
                     </div>
 
                 </div>
+
+                <footer class="text-center footer-text">
+                    <div class="small">
+                        Copyright &copy; <?= date('Y'); ?>
+                        <a href="https://robbyilham.com/" style="text-decoration: none" target="_blank">
+                            by
+                        </a>
+                        IT Development IHBS
+                    </div>
+                </footer>
+
             </main>
         </div>
     </div>

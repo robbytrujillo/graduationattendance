@@ -406,6 +406,24 @@ if ($keyword !== '') {
             margin-bottom: 3px;
         }
     }
+
+    .content-area {
+        min-height: calc(100vh - 70px);
+        display: flex;
+        flex-direction: column;
+    }
+
+    .content-wrapper {
+        flex: 1;
+    }
+
+    .footer-text {
+        padding: 18px 10px;
+        margin-top: 25px;
+        color: #64748B;
+        border-top: 1px solid #e5e7eb;
+        background: #fff;
+    }
     </style>
 </head>
 
@@ -492,318 +510,334 @@ if ($keyword !== '') {
             <div class="sidebar-overlay" id="sidebarOverlay"></div>
 
             <div class="col-md-10 content-area">
-                <div class="container-fluid mt-4 mb-5">
 
-                    <h3>
-                        <i class="fas fa-user-graduate"></i>
-                        Data Siswa
-                    </h3>
+                <div class="content-wrapper">
 
-                    <hr>
+                    <div class="container-fluid mt-4 mb-5">
 
-                    <div class="row mb-4">
-                        <div class="col-md-3">
-                            <div class="card">
-                                <div class="card-body text-center">
-                                    <h2 class="text-primary"><?= $totalSiswa; ?></h2>
-                                    <strong>Total Siswa</strong>
+                        <h3>
+                            <i class="fas fa-user-graduate"></i>
+                            Data Siswa
+                        </h3>
+
+                        <hr>
+
+                        <div class="row mb-4">
+                            <div class="col-md-3">
+                                <div class="card">
+                                    <div class="card-body text-center">
+                                        <h2 class="text-primary"><?= $totalSiswa; ?></h2>
+                                        <strong>Total Siswa</strong>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
 
-                    <?php if ($success !== '') : ?>
-                    <div class="alert alert-success alert-dismissible fade show">
-                        <strong>Berhasil!</strong> <?= e($success); ?>
-                        <button type="button" class="close" data-dismiss="alert">&times;</button>
-                    </div>
-                    <?php endif; ?>
+                        <?php if ($success !== '') : ?>
+                        <div class="alert alert-success alert-dismissible fade show">
+                            <strong>Berhasil!</strong> <?= e($success); ?>
+                            <button type="button" class="close" data-dismiss="alert">&times;</button>
+                        </div>
+                        <?php endif; ?>
 
-                    <?php if ($error !== '') : ?>
-                    <div class="alert alert-danger alert-dismissible fade show">
-                        <strong>Gagal!</strong> <?= e($error); ?>
-                        <button type="button" class="close" data-dismiss="alert">&times;</button>
-                    </div>
-                    <?php endif; ?>
+                        <?php if ($error !== '') : ?>
+                        <div class="alert alert-danger alert-dismissible fade show">
+                            <strong>Gagal!</strong> <?= e($error); ?>
+                            <button type="button" class="close" data-dismiss="alert">&times;</button>
+                        </div>
+                        <?php endif; ?>
 
-                    <div class="card mb-4">
-                        <div class="card-body">
+                        <div class="card mb-4">
+                            <div class="card-body">
 
-                            <div class="row align-items-center mb-4">
-                                <div class="col-md-8">
-                                    <form method="GET">
-                                        <div class="input-group">
-                                            <input type="text" name="keyword" class="form-control"
-                                                placeholder="Cari NIS, Nama, Kelas, atau Username..."
-                                                value="<?= e($keyword); ?>">
+                                <div class="row align-items-center mb-4">
+                                    <div class="col-md-8">
+                                        <form method="GET">
+                                            <div class="input-group">
+                                                <input type="text" name="keyword" class="form-control"
+                                                    placeholder="Cari NIS, Nama, Kelas, atau Username..."
+                                                    value="<?= e($keyword); ?>">
 
-                                            <div class="input-group-append">
-                                                <button class="btn btn-primary" type="submit">
-                                                    <i class="fas fa-search"></i> Cari
-                                                </button>
+                                                <div class="input-group-append">
+                                                    <button class="btn btn-primary" type="submit">
+                                                        <i class="fas fa-search"></i> Cari
+                                                    </button>
 
-                                                <?php if ($keyword !== '') : ?>
-                                                <a href="siswa.php" class="btn btn-secondary">Reset</a>
-                                                <?php endif; ?>
+                                                    <?php if ($keyword !== '') : ?>
+                                                    <a href="siswa.php" class="btn btn-secondary">Reset</a>
+                                                    <?php endif; ?>
+                                                </div>
                                             </div>
-                                        </div>
-                                    </form>
+                                        </form>
+                                    </div>
+
+                                    <!-- <div class="col-md-4 text-md-right">
+                                        <button class="btn btn-success btn-tambah" data-toggle="modal"
+                                            data-target="#modalTambah">
+                                            <i class="fas fa-plus"></i> Tambah Siswa
+                                        </button>
+                                    </div> -->
                                 </div>
 
-                                <!-- <div class="col-md-4 text-md-right">
-                                    <button class="btn btn-success btn-tambah" data-toggle="modal"
-                                        data-target="#modalTambah">
-                                        <i class="fas fa-plus"></i> Tambah Siswa
-                                    </button>
-                                </div> -->
-                            </div>
+                                <?php $modalHtml = ''; ?>
 
-                            <?php $modalHtml = ''; ?>
+                                <div class="table-responsive">
+                                    <table class="table table-bordered table-striped table-hover mb-0">
+                                        <thead class="thead-dark">
+                                            <tr>
+                                                <th width="60">No</th>
+                                                <th>NIS</th>
+                                                <th>Nama</th>
+                                                <th>Kelas</th>
+                                                <th>Username</th>
+                                                <th>Role</th>
+                                                <th width="220">Aksi</th>
+                                            </tr>
+                                        </thead>
 
-                            <div class="table-responsive">
-                                <table class="table table-bordered table-striped table-hover mb-0">
-                                    <thead class="thead-dark">
-                                        <tr>
-                                            <th width="60">No</th>
-                                            <th>NIS</th>
-                                            <th>Nama</th>
-                                            <th>Kelas</th>
-                                            <th>Username</th>
-                                            <th>Role</th>
-                                            <th width="220">Aksi</th>
-                                        </tr>
-                                    </thead>
+                                        <tbody>
+                                            <?php if (mysqli_num_rows($query) > 0) : ?>
+                                            <?php while ($row = mysqli_fetch_assoc($query)) : ?>
+                                            <tr>
+                                                <td><?= $no++; ?></td>
+                                                <td><?= e($row['nis']); ?></td>
+                                                <td><?= e($row['nama_siswa']); ?></td>
+                                                <td><?= e($row['kelas']); ?></td>
+                                                <td><?= e($row['username']); ?></td>
+                                                <td>
+                                                    <span class="badge badge-success">
+                                                        <?= ucfirst(e($row['role'])); ?>
+                                                    </span>
+                                                </td>
 
-                                    <tbody>
-                                        <?php if (mysqli_num_rows($query) > 0) : ?>
-                                        <?php while ($row = mysqli_fetch_assoc($query)) : ?>
-                                        <tr>
-                                            <td><?= $no++; ?></td>
-                                            <td><?= e($row['nis']); ?></td>
-                                            <td><?= e($row['nama_siswa']); ?></td>
-                                            <td><?= e($row['kelas']); ?></td>
-                                            <td><?= e($row['username']); ?></td>
-                                            <td>
-                                                <span class="badge badge-success">
-                                                    <?= ucfirst(e($row['role'])); ?>
-                                                </span>
-                                            </td>
+                                                <td class="action-btn">
+                                                    <button class="btn btn-info btn-sm" data-toggle="modal"
+                                                        data-target="#detail<?= $row['id']; ?>" title="Detail">
+                                                        <i class="fas fa-eye"></i>
+                                                    </button>
 
-                                            <td class="action-btn">
-                                                <button class="btn btn-info btn-sm" data-toggle="modal"
-                                                    data-target="#detail<?= $row['id']; ?>" title="Detail">
-                                                    <i class="fas fa-eye"></i>
-                                                </button>
+                                                    <button class="btn btn-warning btn-sm" data-toggle="modal"
+                                                        data-target="#edit<?= $row['id']; ?>" title="Edit">
+                                                        <i class="fas fa-edit"></i>
+                                                    </button>
 
-                                                <button class="btn btn-warning btn-sm" data-toggle="modal"
-                                                    data-target="#edit<?= $row['id']; ?>" title="Edit">
-                                                    <i class="fas fa-edit"></i>
-                                                </button>
+                                                    <a href="?reset=<?= $row['id']; ?><?= $queryString; ?>&page=<?= $page; ?>"
+                                                        class="btn btn-secondary btn-sm" title="Reset Password"
+                                                        onclick="return confirm('Reset password menjadi 123456?')">
+                                                        <i class="fas fa-key"></i>
+                                                    </a>
 
-                                                <a href="?reset=<?= $row['id']; ?><?= $queryString; ?>&page=<?= $page; ?>"
-                                                    class="btn btn-secondary btn-sm" title="Reset Password"
-                                                    onclick="return confirm('Reset password menjadi 123456?')">
-                                                    <i class="fas fa-key"></i>
-                                                </a>
+                                                    <a href="?hapus=<?= $row['id']; ?><?= $queryString; ?>&page=<?= $page; ?>"
+                                                        class="btn btn-danger btn-sm" title="Hapus"
+                                                        onclick="return confirm('Yakin ingin menghapus siswa ini?')">
+                                                        <i class="fas fa-trash"></i>
+                                                    </a>
+                                                </td>
+                                            </tr>
 
-                                                <a href="?hapus=<?= $row['id']; ?><?= $queryString; ?>&page=<?= $page; ?>"
-                                                    class="btn btn-danger btn-sm" title="Hapus"
-                                                    onclick="return confirm('Yakin ingin menghapus siswa ini?')">
-                                                    <i class="fas fa-trash"></i>
-                                                </a>
-                                            </td>
-                                        </tr>
+                                            <?php
+                                                    $id = (int) $row['id'];
+                                                    $nisModal = e($row['nis']);
+                                                    $namaModal = e($row['nama_siswa']);
+                                                    $kelasModal = e($row['kelas']);
+                                                    $usernameModal = e($row['username']);
+                                                    $roleModal = ucfirst(e($row['role']));
 
-                                        <?php
-                                                $id = (int) $row['id'];
-                                                $nisModal = e($row['nis']);
-                                                $namaModal = e($row['nama_siswa']);
-                                                $kelasModal = e($row['kelas']);
-                                                $usernameModal = e($row['username']);
-                                                $roleModal = ucfirst(e($row['role']));
-
-                                                $modalHtml .= '
-                                                <div class="modal fade" id="detail' . $id . '" tabindex="-1">
-                                                    <div class="modal-dialog">
-                                                        <div class="modal-content">
-                                                            <div class="modal-header bg-info text-white">
-                                                                <h5 class="modal-title">
-                                                                    <i class="fas fa-eye"></i> Detail Siswa
-                                                                </h5>
-                                                                <button type="button" class="close text-white" data-dismiss="modal">
-                                                                    &times;
-                                                                </button>
-                                                            </div>
-
-                                                            <div class="modal-body">
-                                                                <table class="table table-bordered mb-0">
-                                                                    <tr>
-                                                                        <th width="35%">NIS</th>
-                                                                        <td>' . $nisModal . '</td>
-                                                                    </tr>
-                                                                    <tr>
-                                                                        <th>Nama Siswa</th>
-                                                                        <td>' . $namaModal . '</td>
-                                                                    </tr>
-                                                                    <tr>
-                                                                        <th>Kelas</th>
-                                                                        <td>' . $kelasModal . '</td>
-                                                                    </tr>
-                                                                    <tr>
-                                                                        <th>Username</th>
-                                                                        <td>' . $usernameModal . '</td>
-                                                                    </tr>
-                                                                    <tr>
-                                                                        <th>Role</th>
-                                                                        <td>' . $roleModal . '</td>
-                                                                    </tr>
-                                                                </table>
-                                                            </div>
-
-                                                            <div class="modal-footer">
-                                                                <button type="button" class="btn btn-secondary" data-dismiss="modal">
-                                                                    Tutup
-                                                                </button>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-
-                                                <div class="modal fade" id="edit' . $id . '" tabindex="-1">
-                                                    <div class="modal-dialog">
-                                                        <form method="POST">
+                                                    $modalHtml .= '
+                                                    <div class="modal fade" id="detail' . $id . '" tabindex="-1">
+                                                        <div class="modal-dialog">
                                                             <div class="modal-content">
-                                                                <div class="modal-header bg-warning">
+                                                                <div class="modal-header bg-info text-white">
                                                                     <h5 class="modal-title">
-                                                                        <i class="fas fa-edit"></i> Edit Siswa
+                                                                        <i class="fas fa-eye"></i> Detail Siswa
                                                                     </h5>
-                                                                    <button type="button" class="close" data-dismiss="modal">
+                                                                    <button type="button" class="close text-white" data-dismiss="modal">
                                                                         &times;
                                                                     </button>
                                                                 </div>
 
                                                                 <div class="modal-body">
-                                                                    <input type="hidden" name="id" value="' . $id . '">
-
-                                                                    <div class="form-group">
-                                                                        <label>NIS</label>
-                                                                        <input type="text" name="nis" class="form-control"
-                                                                            value="' . $nisModal . '" required>
-                                                                    </div>
-
-                                                                    <div class="form-group">
-                                                                        <label>Nama Siswa</label>
-                                                                        <input type="text" name="nama_siswa" class="form-control"
-                                                                            value="' . $namaModal . '" required>
-                                                                    </div>
-
-                                                                    <div class="form-group">
-                                                                        <label>Kelas</label>
-                                                                        <input type="text" name="kelas" class="form-control"
-                                                                            value="' . $kelasModal . '" required>
-                                                                    </div>
-
-                                                                    <div class="form-group mb-0">
-                                                                        <label>Username</label>
-                                                                        <input type="text" name="username" class="form-control"
-                                                                            value="' . $usernameModal . '" required>
-                                                                    </div>
+                                                                    <table class="table table-bordered mb-0">
+                                                                        <tr>
+                                                                            <th width="35%">NIS</th>
+                                                                            <td>' . $nisModal . '</td>
+                                                                        </tr>
+                                                                        <tr>
+                                                                            <th>Nama Siswa</th>
+                                                                            <td>' . $namaModal . '</td>
+                                                                        </tr>
+                                                                        <tr>
+                                                                            <th>Kelas</th>
+                                                                            <td>' . $kelasModal . '</td>
+                                                                        </tr>
+                                                                        <tr>
+                                                                            <th>Username</th>
+                                                                            <td>' . $usernameModal . '</td>
+                                                                        </tr>
+                                                                        <tr>
+                                                                            <th>Role</th>
+                                                                            <td>' . $roleModal . '</td>
+                                                                        </tr>
+                                                                    </table>
                                                                 </div>
 
                                                                 <div class="modal-footer">
                                                                     <button type="button" class="btn btn-secondary" data-dismiss="modal">
-                                                                        Batal
-                                                                    </button>
-
-                                                                    <button type="submit" name="edit" class="btn btn-warning">
-                                                                        <i class="fas fa-save"></i> Simpan Perubahan
+                                                                        Tutup
                                                                     </button>
                                                                 </div>
                                                             </div>
-                                                        </form>
+                                                        </div>
                                                     </div>
-                                                </div>
-                                                ';
-                                                ?>
-                                        <?php endwhile; ?>
-                                        <?php else : ?>
-                                        <tr>
-                                            <td colspan="7" class="text-center text-muted">
-                                                <i class="fas fa-info-circle"></i>
-                                                Data siswa tidak ditemukan.
-                                            </td>
-                                        </tr>
+
+                                                    <div class="modal fade" id="edit' . $id . '" tabindex="-1">
+                                                        <div class="modal-dialog">
+                                                            <form method="POST">
+                                                                <div class="modal-content">
+                                                                    <div class="modal-header bg-warning">
+                                                                        <h5 class="modal-title">
+                                                                            <i class="fas fa-edit"></i> Edit Siswa
+                                                                        </h5>
+                                                                        <button type="button" class="close" data-dismiss="modal">
+                                                                            &times;
+                                                                        </button>
+                                                                    </div>
+
+                                                                    <div class="modal-body">
+                                                                        <input type="hidden" name="id" value="' . $id . '">
+
+                                                                        <div class="form-group">
+                                                                            <label>NIS</label>
+                                                                            <input type="text" name="nis" class="form-control"
+                                                                                value="' . $nisModal . '" required>
+                                                                        </div>
+
+                                                                        <div class="form-group">
+                                                                            <label>Nama Siswa</label>
+                                                                            <input type="text" name="nama_siswa" class="form-control"
+                                                                                value="' . $namaModal . '" required>
+                                                                        </div>
+
+                                                                        <div class="form-group">
+                                                                            <label>Kelas</label>
+                                                                            <input type="text" name="kelas" class="form-control"
+                                                                                value="' . $kelasModal . '" required>
+                                                                        </div>
+
+                                                                        <div class="form-group mb-0">
+                                                                            <label>Username</label>
+                                                                            <input type="text" name="username" class="form-control"
+                                                                                value="' . $usernameModal . '" required>
+                                                                        </div>
+                                                                    </div>
+
+                                                                    <div class="modal-footer">
+                                                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">
+                                                                            Batal
+                                                                        </button>
+
+                                                                        <button type="submit" name="edit" class="btn btn-warning">
+                                                                            <i class="fas fa-save"></i> Simpan Perubahan
+                                                                        </button>
+                                                                    </div>
+                                                                </div>
+                                                            </form>
+                                                        </div>
+                                                    </div>
+                                                    ';
+                                                    ?>
+                                            <?php endwhile; ?>
+                                            <?php else : ?>
+                                            <tr>
+                                                <td colspan="7" class="text-center text-muted">
+                                                    <i class="fas fa-info-circle"></i>
+                                                    Data siswa tidak ditemukan.
+                                                </td>
+                                            </tr>
+                                            <?php endif; ?>
+                                        </tbody>
+                                    </table>
+                                </div>
+
+                                <!-- MODAL DETAIL DAN EDIT DI LUAR TABEL -->
+                                <?= $modalHtml; ?>
+
+                                <?php if ($totalPage > 1) : ?>
+                                <nav class="mt-4">
+                                    <ul class="pagination justify-content-center mb-0">
+
+                                        <li class="page-item <?= ($page <= 1) ? 'disabled' : ''; ?>">
+                                            <a class="page-link" href="?page=<?= $page - 1; ?><?= $queryString; ?>">
+                                                Previous
+                                            </a>
+                                        </li>
+
+                                        <?php
+                                            $startPage = max(1, $page - 2);
+                                            $endPage   = min($totalPage, $page + 2);
+
+                                            if ($startPage > 1) :
+                                            ?>
+                                        <li class="page-item">
+                                            <a class="page-link" href="?page=1<?= $queryString; ?>">1</a>
+                                        </li>
+
+                                        <?php if ($startPage > 2) : ?>
+                                        <li class="page-item disabled">
+                                            <span class="page-link">...</span>
+                                        </li>
                                         <?php endif; ?>
-                                    </tbody>
-                                </table>
+                                        <?php endif; ?>
+
+                                        <?php for ($i = $startPage; $i <= $endPage; $i++) : ?>
+                                        <li class="page-item <?= ($i == $page) ? 'active' : ''; ?>">
+                                            <a class="page-link" href="?page=<?= $i; ?><?= $queryString; ?>">
+                                                <?= $i; ?>
+                                            </a>
+                                        </li>
+                                        <?php endfor; ?>
+
+                                        <?php if ($endPage < $totalPage) : ?>
+                                        <?php if ($endPage < $totalPage - 1) : ?>
+                                        <li class="page-item disabled">
+                                            <span class="page-link">...</span>
+                                        </li>
+                                        <?php endif; ?>
+
+                                        <li class="page-item">
+                                            <a class="page-link" href="?page=<?= $totalPage; ?><?= $queryString; ?>">
+                                                <?= $totalPage; ?>
+                                            </a>
+                                        </li>
+                                        <?php endif; ?>
+
+                                        <li class="page-item <?= ($page >= $totalPage) ? 'disabled' : ''; ?>">
+                                            <a class="page-link" href="?page=<?= $page + 1; ?><?= $queryString; ?>">
+                                                Next
+                                            </a>
+                                        </li>
+
+                                    </ul>
+                                </nav>
+                                <?php endif; ?>
+
                             </div>
-
-                            <!-- MODAL DETAIL DAN EDIT DI LUAR TABEL -->
-                            <?= $modalHtml; ?>
-
-                            <?php if ($totalPage > 1) : ?>
-                            <nav class="mt-4">
-                                <ul class="pagination justify-content-center mb-0">
-
-                                    <li class="page-item <?= ($page <= 1) ? 'disabled' : ''; ?>">
-                                        <a class="page-link" href="?page=<?= $page - 1; ?><?= $queryString; ?>">
-                                            Previous
-                                        </a>
-                                    </li>
-
-                                    <?php
-                                        $startPage = max(1, $page - 2);
-                                        $endPage   = min($totalPage, $page + 2);
-
-                                        if ($startPage > 1) :
-                                        ?>
-                                    <li class="page-item">
-                                        <a class="page-link" href="?page=1<?= $queryString; ?>">1</a>
-                                    </li>
-
-                                    <?php if ($startPage > 2) : ?>
-                                    <li class="page-item disabled">
-                                        <span class="page-link">...</span>
-                                    </li>
-                                    <?php endif; ?>
-                                    <?php endif; ?>
-
-                                    <?php for ($i = $startPage; $i <= $endPage; $i++) : ?>
-                                    <li class="page-item <?= ($i == $page) ? 'active' : ''; ?>">
-                                        <a class="page-link" href="?page=<?= $i; ?><?= $queryString; ?>">
-                                            <?= $i; ?>
-                                        </a>
-                                    </li>
-                                    <?php endfor; ?>
-
-                                    <?php if ($endPage < $totalPage) : ?>
-                                    <?php if ($endPage < $totalPage - 1) : ?>
-                                    <li class="page-item disabled">
-                                        <span class="page-link">...</span>
-                                    </li>
-                                    <?php endif; ?>
-
-                                    <li class="page-item">
-                                        <a class="page-link" href="?page=<?= $totalPage; ?><?= $queryString; ?>">
-                                            <?= $totalPage; ?>
-                                        </a>
-                                    </li>
-                                    <?php endif; ?>
-
-                                    <li class="page-item <?= ($page >= $totalPage) ? 'disabled' : ''; ?>">
-                                        <a class="page-link" href="?page=<?= $page + 1; ?><?= $queryString; ?>">
-                                            Next
-                                        </a>
-                                    </li>
-
-                                </ul>
-                            </nav>
-                            <?php endif; ?>
-
                         </div>
+
                     </div>
 
                 </div>
+
+                <footer class="text-center footer-text">
+                    <div class="small">
+                        Copyright &copy; <?= date('Y'); ?>
+                        <a href="https://robbyilham.com/" style="text-decoration: none" target="_blank">
+                            by
+                        </a>
+                        IT Development IHBS
+                    </div>
+                </footer>
+
             </div>
         </div>
     </div>

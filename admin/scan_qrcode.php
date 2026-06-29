@@ -184,6 +184,24 @@ if ($_SESSION['role'] !== 'admin') {
             font-size: 20px;
         }
     }
+
+    .content-area {
+        min-height: calc(100vh - 70px);
+        display: flex;
+        flex-direction: column;
+    }
+
+    .content-wrapper {
+        flex: 1;
+    }
+
+    .footer-text {
+        padding: 18px 10px;
+        margin-top: 25px;
+        color: #64748B;
+        border-top: 1px solid #e5e7eb;
+        background: #fff;
+    }
     </style>
 </head>
 
@@ -262,70 +280,74 @@ if ($_SESSION['role'] !== 'admin') {
 
             <div class="col-md-10 content-area">
 
-                <div class="container-fluid mt-4 mb-5">
+                <div class="content-wrapper">
 
-                    <h3>
-                        <i class="fas fa-qrcode text-success"></i>
-                        Scan QR Code Absensi
-                    </h3>
+                    <div class="container-fluid mt-4 mb-5">
 
-                    <hr>
+                        <h3>
+                            <i class="fas fa-qrcode text-success"></i>
+                            Scan QR Code Absensi
+                        </h3>
 
-                    <div class="row">
+                        <hr>
 
-                        <div class="col-lg-7 mb-4">
+                        <div class="row">
 
-                            <div class="card scanner-card">
+                            <div class="col-lg-7 mb-4">
 
-                                <div class="card-header bg-success text-white">
-                                    <h5 class="mb-0">
-                                        <i class="fas fa-camera"></i>
-                                        Kamera Scanner
-                                    </h5>
-                                </div>
+                                <div class="card scanner-card">
 
-                                <div class="card-body">
-
-                                    <div class="text-center mb-3">
-                                        <h5>Arahkan QR Code Siswa ke Kamera</h5>
-                                        <p class="text-muted mb-0">
-                                            QR Code hanya dapat digunakan satu kali dalam satu hari.
-                                        </p>
+                                    <div class="card-header bg-success text-white">
+                                        <h5 class="mb-0">
+                                            <i class="fas fa-camera"></i>
+                                            Kamera Scanner
+                                        </h5>
                                     </div>
 
-                                    <div id="reader"></div>
+                                    <div class="card-body">
 
-                                    <div id="result" class="scanner-status mt-3">
-                                        <div class="alert alert-info mb-0">
-                                            <i class="fas fa-spinner fa-spin"></i>
-                                            Menyiapkan kamera...
+                                        <div class="text-center mb-3">
+                                            <h5>Arahkan QR Code Siswa ke Kamera</h5>
+                                            <p class="text-muted mb-0">
+                                                QR Code hanya dapat digunakan satu kali dalam satu hari.
+                                            </p>
                                         </div>
-                                    </div>
 
+                                        <div id="reader"></div>
+
+                                        <div id="result" class="scanner-status mt-3">
+                                            <div class="alert alert-info mb-0">
+                                                <i class="fas fa-spinner fa-spin"></i>
+                                                Menyiapkan kamera...
+                                            </div>
+                                        </div>
+
+                                    </div>
                                 </div>
+
                             </div>
 
-                        </div>
+                            <div class="col-lg-5 mb-4">
 
-                        <div class="col-lg-5 mb-4">
+                                <div class="card">
 
-                            <div class="card">
+                                    <div class="card-header bg-primary text-white">
+                                        <h5 class="mb-0">
+                                            <i class="fas fa-info-circle"></i>
+                                            Informasi Scan
+                                        </h5>
+                                    </div>
 
-                                <div class="card-header bg-primary text-white">
-                                    <h5 class="mb-0">
-                                        <i class="fas fa-info-circle"></i>
-                                        Informasi Scan
-                                    </h5>
-                                </div>
+                                    <div class="card-body">
+                                        <ul class="pl-3 mb-0">
+                                            <li>Pastikan izin kamera browser sudah diizinkan.</li>
+                                            <li>Arahkan QR Code siswa ke area kamera.</li>
+                                            <li>Absensi otomatis masuk ke tabel absensi.</li>
+                                            <li>Siswa hanya dapat absen satu kali per hari.</li>
+                                            <li>Gunakan HTTPS atau localhost agar kamera dapat dibuka.</li>
+                                        </ul>
+                                    </div>
 
-                                <div class="card-body">
-                                    <ul class="pl-3 mb-0">
-                                        <li>Pastikan izin kamera browser sudah diizinkan.</li>
-                                        <li>Arahkan QR Code siswa ke area kamera.</li>
-                                        <li>Absensi otomatis masuk ke tabel absensi.</li>
-                                        <li>Siswa hanya dapat absen satu kali per hari.</li>
-                                        <li>Gunakan HTTPS atau localhost agar kamera dapat dibuka.</li>
-                                    </ul>
                                 </div>
 
                             </div>
@@ -335,6 +357,17 @@ if ($_SESSION['role'] !== 'admin') {
                     </div>
 
                 </div>
+
+                <footer class="text-center footer-text">
+                    <div class="small">
+                        Copyright &copy; <?= date('Y'); ?>
+                        <a href="https://robbyilham.com/" style="text-decoration: none" target="_blank">
+                            by
+                        </a>
+                        IT Development IHBS
+                    </div>
+                </footer>
+
             </div>
 
         </div>

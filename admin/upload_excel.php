@@ -351,6 +351,24 @@ if (isset($_POST['upload_excel'])) {
             font-size: 15px;
         }
     }
+
+    .content-area {
+        min-height: calc(100vh - 70px);
+        display: flex;
+        flex-direction: column;
+    }
+
+    .content-wrapper {
+        flex: 1;
+    }
+
+    .footer-text {
+        padding: 18px 10px;
+        margin-top: 25px;
+        color: #64748B;
+        border-top: 1px solid #e5e7eb;
+        background: #fff;
+    }
     </style>
 </head>
 
@@ -429,141 +447,156 @@ if (isset($_POST['upload_excel'])) {
 
             <div class="col-md-10 content-area">
 
-                <div class="container-fluid mt-4 mb-5">
+                <div class="content-wrapper">
 
-                    <h3>
-                        <i class="fas fa-file-excel text-success"></i>
-                        Upload Data Siswa
-                    </h3>
+                    <div class="container-fluid mt-4 mb-5">
 
-                    <hr>
+                        <h3>
+                            <i class="fas fa-file-excel text-success"></i>
+                            Upload Data Siswa
+                        </h3>
 
-                    <?php if ($success !== '') : ?>
-                    <div class="alert alert-success alert-dismissible fade show">
-                        <strong>Berhasil!</strong> <?= e($success); ?>
-                        <button type="button" class="close" data-dismiss="alert">&times;</button>
-                    </div>
-                    <?php endif; ?>
+                        <hr>
 
-                    <?php if ($error !== '') : ?>
-                    <div class="alert alert-danger alert-dismissible fade show">
-                        <strong>Gagal!</strong> <?= e($error); ?>
-                        <button type="button" class="close" data-dismiss="alert">&times;</button>
-                    </div>
-                    <?php endif; ?>
-
-                    <div class="row">
-
-                        <div class="col-lg-7 mb-4">
-                            <div class="card">
-
-                                <div class="card-header bg-success text-white">
-                                    <h5 class="mb-0">
-                                        <i class="fas fa-upload"></i>
-                                        Import Data Siswa dan QR Code
-                                    </h5>
-                                </div>
-
-                                <div class="card-body">
-
-                                    <div class="text-center mb-4">
-                                        <i class="fas fa-file-excel upload-icon"></i>
-                                        <h5 class="mt-3">Upload File Excel Siswa</h5>
-                                        <p class="text-muted mb-0">
-                                            Format yang didukung: XLSX, XLS, CSV
-                                        </p>
-                                    </div>
-
-                                    <form method="POST" enctype="multipart/form-data">
-
-                                        <div class="form-group">
-                                            <label>Pilih File Excel</label>
-                                            <input type="file" name="file_excel" class="form-control-file"
-                                                accept=".xlsx,.xls,.csv" required>
-                                        </div>
-
-                                        <div class="alert alert-warning">
-                                            <i class="fas fa-key"></i>
-                                            Password default setiap siswa:
-                                            <strong>123456</strong>
-                                            <br>
-                                            <i class="fas fa-qrcode"></i>
-                                            QR Code dibuat otomatis untuk siswa baru.
-                                        </div>
-
-                                        <button type="submit" name="upload_excel"
-                                            class="btn btn-success btn-sm rounded-pill">
-                                            <i class="fas fa-upload"></i>
-                                            Upload dan Import Data
-                                        </button>
-
-                                        <a href="template_excel.php"
-                                            class="btn btn-outline-primary btn-sm rounded-pill">
-                                            <i class="fas fa-download"></i>
-                                            Download Template Excel
-                                        </a>
-
-                                    </form>
-
-                                </div>
-                            </div>
+                        <?php if ($success !== '') : ?>
+                        <div class="alert alert-success alert-dismissible fade show">
+                            <strong>Berhasil!</strong> <?= e($success); ?>
+                            <button type="button" class="close" data-dismiss="alert">&times;</button>
                         </div>
+                        <?php endif; ?>
 
-                        <div class="col-lg-5 mb-4">
-                            <div class="card">
+                        <?php if ($error !== '') : ?>
+                        <div class="alert alert-danger alert-dismissible fade show">
+                            <strong>Gagal!</strong> <?= e($error); ?>
+                            <button type="button" class="close" data-dismiss="alert">&times;</button>
+                        </div>
+                        <?php endif; ?>
 
-                                <div class="card-header bg-primary text-white">
-                                    <h5 class="mb-0">
-                                        <i class="fas fa-info-circle"></i>
-                                        Format File Excel
-                                    </h5>
-                                </div>
+                        <div class="row">
 
-                                <div class="card-body">
+                            <div class="col-lg-7 mb-4">
+                                <div class="card">
 
-                                    <p>Baris pertama Excel wajib menggunakan header berikut:</p>
-
-                                    <div class="table-responsive">
-                                        <table class="table table-bordered format-table">
-                                            <thead>
-                                                <tr>
-                                                    <th>NIS</th>
-                                                    <th>Nama Siswa</th>
-                                                    <th>Kelas</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                <tr>
-                                                    <td>2026001</td>
-                                                    <td>Ahmad Fauzan</td>
-                                                    <td>XII IPA 1</td>
-                                                </tr>
-                                                <tr>
-                                                    <td>2026002</td>
-                                                    <td>Siti Aisyah</td>
-                                                    <td>XII IPA 2</td>
-                                                </tr>
-                                            </tbody>
-                                        </table>
+                                    <div class="card-header bg-success text-white">
+                                        <h5 class="mb-0">
+                                            <i class="fas fa-upload"></i>
+                                            Import Data Siswa dan QR Code
+                                        </h5>
                                     </div>
 
-                                    <hr>
+                                    <div class="card-body">
 
-                                    <ul class="pl-3 mb-0">
-                                        <li>Kolom wajib: NIS, Nama Siswa, Kelas.</li>
-                                        <li>NIS tidak boleh sama.</li>
-                                        <li>NIS yang sudah terdaftar akan dilewati.</li>
-                                        <li>QR Code dibuat otomatis untuk siswa baru.</li>
-                                        <li>Ukuran file maksimal 5 MB.</li>
-                                    </ul>
+                                        <div class="text-center mb-4">
+                                            <i class="fas fa-file-excel upload-icon"></i>
+                                            <h5 class="mt-3">Upload File Excel Siswa</h5>
+                                            <p class="text-muted mb-0">
+                                                Format yang didukung: XLSX, XLS, CSV
+                                            </p>
+                                        </div>
 
+                                        <form method="POST" enctype="multipart/form-data">
+
+                                            <div class="form-group">
+                                                <label>Pilih File Excel</label>
+                                                <input type="file" name="file_excel" class="form-control-file"
+                                                    accept=".xlsx,.xls,.csv" required>
+                                            </div>
+
+                                            <div class="alert alert-warning">
+                                                <i class="fas fa-key"></i>
+                                                Password default setiap siswa:
+                                                <strong>123456</strong>
+                                                <br>
+                                                <i class="fas fa-qrcode"></i>
+                                                QR Code dibuat otomatis untuk siswa baru.
+                                            </div>
+
+                                            <button type="submit" name="upload_excel"
+                                                class="btn btn-success btn-sm rounded-pill">
+                                                <i class="fas fa-upload"></i>
+                                                Upload dan Import Data
+                                            </button>
+
+                                            <a href="template_excel.php"
+                                                class="btn btn-outline-primary btn-sm rounded-pill">
+                                                <i class="fas fa-download"></i>
+                                                Download Template Excel
+                                            </a>
+
+                                        </form>
+
+                                    </div>
                                 </div>
                             </div>
+
+                            <div class="col-lg-5 mb-4">
+                                <div class="card">
+
+                                    <div class="card-header bg-primary text-white">
+                                        <h5 class="mb-0">
+                                            <i class="fas fa-info-circle"></i>
+                                            Format File Excel
+                                        </h5>
+                                    </div>
+
+                                    <div class="card-body">
+
+                                        <p>Baris pertama Excel wajib menggunakan header berikut:</p>
+
+                                        <div class="table-responsive">
+                                            <table class="table table-bordered format-table">
+                                                <thead>
+                                                    <tr>
+                                                        <th>NIS</th>
+                                                        <th>Nama Siswa</th>
+                                                        <th>Kelas</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr>
+                                                        <td>2026001</td>
+                                                        <td>Ahmad Fauzan</td>
+                                                        <td>XII IPA 1</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>2026002</td>
+                                                        <td>Siti Aisyah</td>
+                                                        <td>XII IPA 2</td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+
+                                        <hr>
+
+                                        <ul class="pl-3 mb-0">
+                                            <li>Kolom wajib: NIS, Nama Siswa, Kelas.</li>
+                                            <li>NIS tidak boleh sama.</li>
+                                            <li>NIS yang sudah terdaftar akan dilewati.</li>
+                                            <li>QR Code dibuat otomatis untuk siswa baru.</li>
+                                            <li>Ukuran file maksimal 5 MB.</li>
+                                        </ul>
+
+                                    </div>
+                                </div>
+                            </div>
+
                         </div>
 
                     </div>
 
                 </div>
+
+                <footer class="text-center footer-text">
+                    <div class="small">
+                        Copyright &copy; <?= date('Y'); ?>
+                        <a href="https://robbyilham.com/" style="text-decoration: none" target="_blank">
+                            by
+                        </a>
+                        IT Development IHBS
+                    </div>
+                </footer>
+
             </div>
 
         </div>
