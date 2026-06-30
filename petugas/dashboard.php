@@ -179,6 +179,24 @@ $absensi = mysqli_query(
             display: none;
         }
     }
+
+    .content-area {
+        min-height: calc(100vh - 70px);
+        display: flex;
+        flex-direction: column;
+    }
+
+    .content-wrapper {
+        flex: 1;
+    }
+
+    .footer-text {
+        padding: 18px 10px;
+        margin-top: 25px;
+        color: #64748B;
+        border-top: 1px solid #e5e7eb;
+        background: #fff;
+    }
     </style>
 
 </head>
@@ -295,33 +313,103 @@ $absensi = mysqli_query(
 
             <div class="col-md-10 content-area">
 
-                <div class="container-fluid mt-4">
+                <div class="content-wrapper">
 
-                    <h3>
-                        Dashboard Admin
-                    </h3>
+                    <div class="container-fluid mt-4">
 
-                    <hr>
+                        <h3>
+                            Dashboard Admin
+                        </h3>
 
-                    <!-- CARD -->
+                        <hr>
 
-                    <div class="row">
+                        <!-- CARD -->
 
-                        <div class="col-md-3 col-6 mb-3">
+                        <div class="row">
 
-                            <div class="card card-dashboard">
+                            <div class="col-md-3 col-6 mb-3">
 
-                                <div class="card-body text-center">
+                                <div class="card card-dashboard">
 
-                                    <div class="card-icon text-primary">
-                                        <i class="fas fa-user-graduate"></i>
+                                    <div class="card-body text-center">
+
+                                        <div class="card-icon text-primary">
+                                            <i class="fas fa-user-graduate"></i>
+                                        </div>
+
+                                        <h3>
+                                            <?= $totalSiswa; ?>
+                                        </h3>
+
+                                        <small>Total Siswa</small>
+
                                     </div>
 
-                                    <h3>
-                                        <?= $totalSiswa; ?>
-                                    </h3>
+                                </div>
 
-                                    <small>Total Siswa</small>
+                            </div>
+
+                            <div class="col-md-3 col-6 mb-3">
+
+                                <div class="card card-dashboard">
+
+                                    <div class="card-body text-center">
+
+                                        <div class="card-icon text-success">
+                                            <i class="fas fa-check-circle"></i>
+                                        </div>
+
+                                        <h3>
+                                            <?= $hadirHariIni; ?>
+                                        </h3>
+
+                                        <small>Hadir Hari Ini</small>
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                            <div class="col-md-3 col-6 mb-3">
+
+                                <div class="card card-dashboard">
+
+                                    <div class="card-body text-center">
+
+                                        <div class="card-icon text-danger">
+                                            <i class="fas fa-times-circle"></i>
+                                        </div>
+
+                                        <h3>
+                                            <?= $belumHadir; ?>
+                                        </h3>
+
+                                        <small>Belum Hadir</small>
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                            <div class="col-md-3 col-6 mb-3">
+
+                                <div class="card card-dashboard">
+
+                                    <div class="card-body text-center">
+
+                                        <div class="card-icon text-warning">
+                                            <i class="fas fa-user-tie"></i>
+                                        </div>
+
+                                        <h3>
+                                            <?= $totalPetugas; ?>
+                                        </h3>
+
+                                        <small>Petugas</small>
+
+                                    </div>
 
                                 </div>
 
@@ -329,139 +417,73 @@ $absensi = mysqli_query(
 
                         </div>
 
-                        <div class="col-md-3 col-6 mb-3">
+                        <!-- DATA ABSENSI -->
 
-                            <div class="card card-dashboard">
+                        <div class="card mt-4">
 
-                                <div class="card-body text-center">
+                            <div class="card-header bg-primary text-white">
 
-                                    <div class="card-icon text-success">
-                                        <i class="fas fa-check-circle"></i>
-                                    </div>
-
-                                    <h3>
-                                        <?= $hadirHariIni; ?>
-                                    </h3>
-
-                                    <small>Hadir Hari Ini</small>
-
-                                </div>
+                                Absensi Terbaru
 
                             </div>
 
-                        </div>
+                            <div class="card-body">
 
-                        <div class="col-md-3 col-6 mb-3">
+                                <div class="table-responsive">
 
-                            <div class="card card-dashboard">
+                                    <table class="table table-bordered table-striped">
 
-                                <div class="card-body text-center">
+                                        <thead>
 
-                                    <div class="card-icon text-danger">
-                                        <i class="fas fa-times-circle"></i>
-                                    </div>
+                                            <tr>
 
-                                    <h3>
-                                        <?= $belumHadir; ?>
-                                    </h3>
+                                                <th>No</th>
+                                                <th>Hari</th>
+                                                <th>Tanggal</th>
+                                                <th>Jam</th>
+                                                <th>NIS</th>
+                                                <th>Nama</th>
+                                                <th>Kelas</th>
 
-                                    <small>Belum Hadir</small>
+                                            </tr>
+
+                                        </thead>
+
+                                        <tbody>
+
+                                            <?php
+
+                                    $no = 1;
+
+                                    while($row = mysqli_fetch_assoc($absensi)) :
+
+                                    ?>
+
+                                            <tr>
+
+                                                <td><?= $no++; ?></td>
+
+                                                <td><?= $row['hari']; ?></td>
+
+                                                <td><?= $row['tanggal']; ?></td>
+
+                                                <td><?= $row['jam']; ?></td>
+
+                                                <td><?= $row['nis']; ?></td>
+
+                                                <td><?= $row['nama_siswa']; ?></td>
+
+                                                <td><?= $row['kelas']; ?></td>
+
+                                            </tr>
+
+                                            <?php endwhile; ?>
+
+                                        </tbody>
+
+                                    </table>
 
                                 </div>
-
-                            </div>
-
-                        </div>
-
-                        <div class="col-md-3 col-6 mb-3">
-
-                            <div class="card card-dashboard">
-
-                                <div class="card-body text-center">
-
-                                    <div class="card-icon text-warning">
-                                        <i class="fas fa-user-tie"></i>
-                                    </div>
-
-                                    <h3>
-                                        <?= $totalPetugas; ?>
-                                    </h3>
-
-                                    <small>Petugas</small>
-
-                                </div>
-
-                            </div>
-
-                        </div>
-
-                    </div>
-
-                    <!-- DATA ABSENSI -->
-
-                    <div class="card mt-4">
-
-                        <div class="card-header bg-primary text-white">
-
-                            Absensi Terbaru
-
-                        </div>
-
-                        <div class="card-body">
-
-                            <div class="table-responsive">
-
-                                <table class="table table-bordered table-striped">
-
-                                    <thead>
-
-                                        <tr>
-
-                                            <th>No</th>
-                                            <th>Hari</th>
-                                            <th>Tanggal</th>
-                                            <th>Jam</th>
-                                            <th>NIS</th>
-                                            <th>Nama</th>
-                                            <th>Kelas</th>
-
-                                        </tr>
-
-                                    </thead>
-
-                                    <tbody>
-
-                                        <?php
-
-                                $no = 1;
-
-                                while($row = mysqli_fetch_assoc($absensi)) :
-
-                                ?>
-
-                                        <tr>
-
-                                            <td><?= $no++; ?></td>
-
-                                            <td><?= $row['hari']; ?></td>
-
-                                            <td><?= $row['tanggal']; ?></td>
-
-                                            <td><?= $row['jam']; ?></td>
-
-                                            <td><?= $row['nis']; ?></td>
-
-                                            <td><?= $row['nama_siswa']; ?></td>
-
-                                            <td><?= $row['kelas']; ?></td>
-
-                                        </tr>
-
-                                        <?php endwhile; ?>
-
-                                    </tbody>
-
-                                </table>
 
                             </div>
 
@@ -470,6 +492,16 @@ $absensi = mysqli_query(
                     </div>
 
                 </div>
+
+                <footer class="text-center footer-text">
+                    <div class="small">
+                        Copyright &copy; <?= date('Y'); ?>
+                        <a href="https://robbyilham.com/" style="text-decoration: none" target="_blank">
+                            by
+                        </a>
+                        IT Development IHBS
+                    </div>
+                </footer>
 
             </div>
 
